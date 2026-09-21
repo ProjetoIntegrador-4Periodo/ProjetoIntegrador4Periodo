@@ -64,19 +64,26 @@ jobs:
           EOF
           )
 
-          gh issue create --repo "$GITHUB_REPOSITORY" \
+          # O número sai da URL que o create devolve. Consultar com `gh issue list`
+          # logo depois falha: a listagem é eventualmente consistente e volta vazia.
+          url=$(gh issue create --repo "$GITHUB_REPOSITORY" \
             --title "Reunião semanal — semana de $inicio" \
             --label reuniao \
-            --body "$corpo"
+            --body "$corpo")
+          numero="${url##*/}"
 
-          # Pré-carrega as reações para o time só clicar.
-          numero=$(gh issue list --repo "$GITHUB_REPOSITORY" --label reuniao --state open \
-            --limit 1 --json number --jq '.[0].number')
+          if ! [[ "$numero" =~ ^[0-9]+$ ]]; then
+            echo "::error::Não consegui extrair o número da issue de: $url"
+            exit 1
+          fi
+
+          # Pré-carrega as reações para o time só clicar no emoji.
+          # A apuração descarta os votos do bot, então isso não conta.
           for r in "+1" hooray heart eyes; do
             gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$numero/reactions" \
-              -f content="$r" --silent || true
+              -f content="$r" --silent
           done
-          echo "Enquete aberta: issue #$numero"
+          echo "Enquete aberta: issue #$numero ($url)"
 
   apurar:
     name: Apurar e anunciar
