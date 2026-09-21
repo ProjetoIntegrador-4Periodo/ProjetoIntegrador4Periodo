@@ -1,6 +1,6 @@
 # Atalhos do dia a dia. Rode `make ajuda` para ver a lista.
 # Interpretador alvo — sobrescreva se o seu tiver outro nome: make setup PYTHON=python3
-PYTHON ?= python3.11
+PYTHON ?= python3.12
 
 .PHONY: ajuda setup lint format test check limpar hooks
 

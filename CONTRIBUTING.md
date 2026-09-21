@@ -15,6 +15,19 @@ código entra por Pull Request, com revisão e CI verde. Se você tentar
 
 ## 1. Preparar o ambiente (uma vez só)
 
+O projeto exige **Python 3.12**. Confira o que você tem com `python3.12 --version`.
+
+Se não tiver:
+
+| Sistema | Comando |
+|---------|---------|
+| macOS | `brew install python@3.12` |
+| Ubuntu / WSL | `sudo apt install python3.12 python3.12-venv` |
+| Windows | Baixe em [python.org/downloads](https://www.python.org/downloads/) e marque *Add to PATH* |
+
+Não é capricho: numpy, scipy e shap deixaram de publicar versões para o 3.11, e
+ficar para trás nesses três significa perder correções durante o semestre.
+
 ```bash
 git clone https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo.git
 cd ProjetoIntegrador4Periodo
@@ -29,6 +42,9 @@ cp .env.example .env   # preencha suas credenciais do Kaggle
 No Windows, ative a venv com `.venv\Scripts\activate`.
 
 Sem `make` disponível? Os comandos equivalentes estão dentro do `Makefile`.
+
+Se o seu Python 3.12 atende por outro nome, passe na chamada:
+`make setup PYTHON=python3`.
 
 ---
 

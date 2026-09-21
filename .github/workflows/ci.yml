@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 env:
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.12"
 
 jobs:
   lint:
@@ -33,7 +33,7 @@ jobs:
 
       # Só as ferramentas de estilo: não vale gastar 5 min baixando torch para rodar lint.
       - name: Instalar ferramentas
-        run: pip install ruff==0.6.2 black==24.8.0
+        run: pip install ruff==0.16.8 black==26.5.1
 
       - name: Ruff
         run: ruff check . --output-format=github
@@ -55,7 +55,7 @@ jobs:
       # Testes que dependem de torch/dataset devem ser marcados com
       # @pytest.mark.slow ou @pytest.mark.gpu e rodam só na máquina do time.
       - name: Instalar dependências de teste
-        run: pip install pytest==8.3.2 pytest-cov==5.0.0
+        run: pip install pytest==9.1.1 pytest-cov==7.1.0
 
       - name: Pytest
         run: pytest -m "not slow and not gpu" --cov=src --cov-report=term-missing
