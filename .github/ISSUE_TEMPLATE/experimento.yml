@@ -1,0 +1,38 @@
+name: Experimento
+description: Rodada de treino/avaliação para comparar com as demais
+title: "[Exp]: "
+labels: ["experimento"]
+body:
+  - type: textarea
+    id: hipotese
+    attributes:
+      label: Hipótese
+      placeholder: "Trocar o backbone para X deve melhorar a sensibilidade porque..."
+    validations:
+      required: true
+
+  - type: input
+    id: config
+    attributes:
+      label: Arquivo de configuração
+      placeholder: configs/effnetb0_baseline.yaml
+    validations:
+      required: true
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: Setup
+      value: |
+        - Dataset / split: 
+        - Backbone: 
+        - Épocas / batch: 
+        - Hardware: 
+    validations:
+      required: true
+
+  - type: textarea
+    id: comparacao
+    attributes:
+      label: Com o que vamos comparar
+      placeholder: "Baseline da issue #12 e a rodada do Bruno na #15."

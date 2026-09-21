@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Dependências Python — agrupadas em um PR mensal para não poluir a fila de review
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels: ["dependencias"]
+    commit-message:
+      prefix: "chore"
+    groups:
+      python:
+        patterns: ["*"]
+
+  # Actions usadas no CI
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    labels: ["dependencias", "ci/cd"]
+    commit-message:
+      prefix: "ci"

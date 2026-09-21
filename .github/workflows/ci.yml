@@ -1,0 +1,114 @@
+name: CI
+
+# Roda em todo PR para a main e a cada push na main.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Um push novo no mesmo PR cancela a execução anterior.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      # Só as ferramentas de estilo: não vale gastar 5 min baixando torch para rodar lint.
+      - name: Instalar ferramentas
+        run: pip install ruff==0.6.2 black==24.8.0
+
+      - name: Ruff
+        run: ruff check . --output-format=github
+
+      - name: Black
+        run: black --check --diff .
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      # Testes que dependem de torch/dataset devem ser marcados com
+      # @pytest.mark.slow ou @pytest.mark.gpu e rodam só na máquina do time.
+      - name: Instalar dependências de teste
+        run: pip install pytest==8.3.2 pytest-cov==5.0.0
+
+      - name: Pytest
+        run: pytest -m "not slow and not gpu" --cov=src --cov-report=term-missing
+
+  seguranca-dados:
+    name: seguranca-dados
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bloquear imagem médica, peso de modelo e segredo no diff
+        run: |
+          base="origin/${{ github.base_ref }}"
+          arquivos=$(git diff --name-only --diff-filter=d "$base"...HEAD)
+          echo "Arquivos alterados:"; echo "$arquivos"
+
+          proibidos=$(echo "$arquivos" | grep -Ei '\.(dcm|dicom|nii|nii\.gz|npy|npz|pt|pth|ckpt|onnx|safetensors|h5|hdf5|pkl)$' || true)
+          if [ -n "$proibidos" ]; then
+            echo "::error::Imagem médica ou peso de modelo não pode ir para o Git:"
+            echo "$proibidos"
+            exit 1
+          fi
+
+          segredos=$(echo "$arquivos" | grep -E '(^|/)(\.env|kaggle\.json|credentials\.json|.*\.pem|.*\.key)$' || true)
+          if [ -n "$segredos" ]; then
+            echo "::error::Arquivo de credencial detectado:"
+            echo "$segredos"
+            exit 1
+          fi
+
+      - name: Bloquear arquivo acima de 5 MB
+        run: |
+          base="origin/${{ github.base_ref }}"
+          limite=$((5 * 1024 * 1024))
+          falhou=0
+          for f in $(git diff --name-only --diff-filter=d "$base"...HEAD); do
+            [ -f "$f" ] || continue
+            tamanho=$(wc -c < "$f")
+            if [ "$tamanho" -gt "$limite" ]; then
+              echo "::error file=$f::$f tem $((tamanho / 1024 / 1024)) MB (limite: 5 MB). Use MLflow, Release ou DVC."
+              falhou=1
+            fi
+          done
+          exit $falhou
+
+      - name: Avisar sobre notebook com saída salva
+        run: |
+          base="origin/${{ github.base_ref }}"
+          for nb in $(git diff --name-only --diff-filter=d "$base"...HEAD | grep '\.ipynb$' || true); do
+            if grep -q '"output_type"' "$nb"; then
+              echo "::warning file=$nb::Notebook commitado com saídas. Rode 'make hooks' para limpar automaticamente."
+            fi
+          done
