@@ -99,8 +99,11 @@ jobs:
             exit 0
           fi
 
+          # Filtrar por login, não por .user.type: a API devolve "User" para o
+          # github-actions[bot], então filtrar por tipo não descartaria nada e as
+          # reações que o bot pré-carrega entrariam na contagem como voto real.
           reacoes=$(gh api "repos/$GITHUB_REPOSITORY/issues/$numero/reactions" --paginate \
-            --jq '.[] | select(.user.type != "Bot") | .content')
+            --jq '.[] | select(.user.login != "github-actions[bot]") | .content')
 
           conta() { echo "$reacoes" | grep -cx "$1" || true; }
           quinta=$(conta "+1")
