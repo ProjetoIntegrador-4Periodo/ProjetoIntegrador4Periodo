@@ -1,0 +1,132 @@
+name: Reunião semanal
+
+# Abre uma enquete nova toda segunda e apura na quarta, antes da primeira
+# opção de dia. Cada semana tem a sua — a disponibilidade do time muda.
+on:
+  schedule:
+    - cron: "0 11 * * 1"   # segunda, 08:00 em Brasília — abre a enquete
+    - cron: "0 15 * * 3"   # quarta,  12:00 em Brasília — apura e anuncia
+  workflow_dispatch:
+    inputs:
+      acao:
+        description: "O que fazer"
+        required: true
+        default: abrir
+        type: choice
+        options: [abrir, apurar]
+
+permissions:
+  issues: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  TZ: America/Sao_Paulo
+
+jobs:
+  abrir:
+    name: Abrir enquete da semana
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 11 * * 1' || inputs.acao == 'abrir'
+    steps:
+      - name: Fechar a enquete da semana passada, se ficou aberta
+        run: |
+          anterior=$(gh issue list --repo "$GITHUB_REPOSITORY" --label reuniao --state open \
+            --json number --jq '.[].number')
+          for n in $anterior; do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" \
+              --comment "Encerrada automaticamente: a enquete desta semana já foi aberta."
+          done
+
+      - name: Abrir a enquete desta semana
+        run: |
+          # A semana de trabalho vai da segunda ao domingo seguinte.
+          inicio=$(date +%d/%m)
+          fim=$(date -d "+6 days" +%d/%m)
+          quinta=$(date -d "next thursday" +%d/%m)
+          sabado=$(date -d "next saturday" +%d/%m)
+          domingo=$(date -d "next sunday" +%d/%m)
+
+          corpo=$(cat <<EOF
+          Enquete da semana de **$inicio a $fim**. Vote até **quarta ao meio-dia**, quando a apuração roda sozinha.
+
+          Reaja nesta issue com o emoji do dia em que você consegue participar. Pode marcar mais de um — quanto mais opções, maior a chance de fechar com todo mundo junto.
+
+          | Reação | Dia |
+          |--------|-----|
+          | 👍 | Quinta, $quinta |
+          | 🎉 | Sábado, $sabado |
+          | ❤️ | Domingo, $domingo |
+          | 👀 | Não consigo em nenhum dos três |
+
+          Quem marcar 👀 comenta abaixo o que dá, para o Kaique conseguir encaixar.
+
+          cc @KaiqueGeska @Jhonatan-Margraf @davidogral @mainardikk @thalescr77
+          EOF
+          )
+
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Reunião semanal — semana de $inicio" \
+            --label reuniao \
+            --body "$corpo"
+
+          # Pré-carrega as reações para o time só clicar.
+          numero=$(gh issue list --repo "$GITHUB_REPOSITORY" --label reuniao --state open \
+            --limit 1 --json number --jq '.[0].number')
+          for r in "+1" hooray heart eyes; do
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$numero/reactions" \
+              -f content="$r" --silent || true
+          done
+          echo "Enquete aberta: issue #$numero"
+
+  apurar:
+    name: Apurar e anunciar
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 15 * * 3' || inputs.acao == 'apurar'
+    steps:
+      - name: Contar os votos e comentar o resultado
+        run: |
+          numero=$(gh issue list --repo "$GITHUB_REPOSITORY" --label reuniao --state open \
+            --limit 1 --json number --jq '.[0].number // empty')
+          if [ -z "$numero" ]; then
+            echo "Nenhuma enquete aberta nesta semana. Nada a apurar."
+            exit 0
+          fi
+
+          reacoes=$(gh api "repos/$GITHUB_REPOSITORY/issues/$numero/reactions" --paginate \
+            --jq '.[] | select(.user.type != "Bot") | .content')
+
+          conta() { echo "$reacoes" | grep -cx "$1" || true; }
+          quinta=$(conta "+1")
+          sabado=$(conta "hooray")
+          domingo=$(conta "heart")
+          nenhum=$(conta "eyes")
+
+          vencedor="Quinta"; max=$quinta
+          if [ "$sabado" -gt "$max" ];  then vencedor="Sábado";  max=$sabado;  fi
+          if [ "$domingo" -gt "$max" ]; then vencedor="Domingo"; max=$domingo; fi
+
+          if [ "$max" -eq 0 ]; then
+            resultado="Ninguém votou ainda. @KaiqueGeska, vale cutucar o time no grupo."
+          else
+            resultado="**Dia com mais gente disponível: $vencedor** ($max votos)."
+            if [ "$nenhum" -gt 0 ]; then
+              resultado="$resultado
+
+          ⚠️ $nenhum pessoa(s) marcaram que não conseguem em nenhum dos dias — vale ler os comentários antes de fechar."
+            fi
+          fi
+
+          gh issue comment "$numero" --repo "$GITHUB_REPOSITORY" --body "$(cat <<EOF
+          ## Apuração
+
+          | Dia | Votos |
+          |-----|-------|
+          | Quinta | $quinta |
+          | Sábado | $sabado |
+          | Domingo | $domingo |
+          | Não consigo | $nenhum |
+
+          $resultado
+          EOF
+          )"
+          echo "Apurado na issue #$numero: $vencedor"

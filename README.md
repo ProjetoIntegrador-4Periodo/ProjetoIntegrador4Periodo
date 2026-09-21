@@ -3,6 +3,7 @@
 [![CI](https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo/actions/workflows/ci.yml/badge.svg)](https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![Código: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Licença: MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green.svg)](LICENSE)
 
 Projeto desenvolvido na disciplina de **Projeto Integrador**, com foco na aplicação de técnicas de Inteligência Artificial e Visão Computacional para auxiliar na detecção de câncer de mama em exames de mamografia digital.
 
@@ -163,6 +164,7 @@ Resumo visual do fluxo em [`docs/FLUXO_GIT.md`](docs/FLUXO_GIT.md).
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Padrões de branch, commit, PR e revisão |
 | [SECURITY.md](SECURITY.md) | Dados sensíveis, credenciais e o que fazer se vazar |
 | [docs/EQUIPE.md](docs/EQUIPE.md) | Papéis, divisão por área, rituais e próximos passos |
+| [CITATION.cff](CITATION.cff) | Como citar este trabalho |
 | [docs/FLUXO_GIT.md](docs/FLUXO_GIT.md) | Fluxo Git e comandos de emergência |
 | [docs/Levantamento Datasets.md](docs/Levantamento%20Datasets.md) | Comparativo RSNA × CBIS-DDSM × VinDr-Mammo |
 | [docs/Escopo do Projeto.docx](docs/Escopo%20do%20Projeto.docx) | Escopo formal da disciplina |
@@ -188,4 +190,8 @@ Detalhes das responsabilidades em [docs/EQUIPE.md](docs/EQUIPE.md).
 
 ## Licença
 
-Projeto desenvolvido exclusivamente para fins acadêmicos na disciplina de **Projeto Integrador**.
+O código e a documentação deste repositório estão sob a [Licença MIT](LICENSE).
+
+A licença **não cobre os dados**: RSNA, CBIS-DDSM e VinDr-Mammo têm termos de uso próprios, aceitos individualmente por cada integrante no Kaggle, no TCIA e no PhysioNet. Nenhuma imagem médica é redistribuída aqui.
+
+Projeto desenvolvido para fins acadêmicos na disciplina de **Projeto Integrador**. Os modelos aqui desenvolvidos não constituem ferramenta de diagnóstico médico.

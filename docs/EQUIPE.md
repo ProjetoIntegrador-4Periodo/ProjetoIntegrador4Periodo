@@ -61,7 +61,18 @@ explicações contra máscaras reais de lesão, já que o RSNA não traz ROI.
 
 ## Rituais
 
-- **Reunião semanal** — dia definido por enquete entre quinta, sábado e domingo.
+- **Reunião semanal** — o dia é decidido por enquete **toda semana**, entre quinta,
+  sábado e domingo. Não é um dia fixo de propósito: a disponibilidade de cada um
+  muda de semana para semana, e a ideia é sempre fechar no dia em que der para
+  reunir todo mundo junto.
+
+  A enquete é automática. Toda **segunda às 08:00** o GitHub abre uma issue com
+  o rótulo `reuniao`, onde cada um reage com o emoji dos dias em que consegue
+  (dá para marcar mais de um). Na **quarta ao meio-dia** a apuração roda sozinha
+  e comenta o dia com mais gente disponível. Ver
+  [`.github/workflows/reuniao-semanal.yml`](../.github/workflows/reuniao-semanal.yml).
+
+  Para abrir ou apurar fora de hora: aba *Actions* → *Reunião semanal* → *Run workflow*.
 - **Organização das etapas** — conduzida pelo Kaique.
 - **Discussão técnica** — acontece no Pull Request, que fica como registro.
 
@@ -70,7 +81,8 @@ explicações contra máscaras reais de lesão, já que o RSNA não traz ROI.
 ## Próximos passos
 
 - [ ] Realizar a EDA sobre o RSNA
-- [ ] Definir o dia fixo da reunião semanal (enquete)
+- [x] Automatizar a enquete semanal da reunião
 - [ ] Kaique organizar as próximas etapas e a divisão das tarefas
 - [ ] Consolidar os resultados das EDAs individuais (Davi)
 - [ ] Adicionar o Victor à organização no GitHub
+- [ ] Bruno avaliar DVC para versionar os dados (reprodutibilidade ponta a ponta)

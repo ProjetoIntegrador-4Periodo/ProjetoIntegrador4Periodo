@@ -56,6 +56,11 @@ git checkout -b <tipo>/<descricao-curta>
 
 Regras: minúsculas, hífen no lugar de espaço, sem acento.
 
+**O GitHub recusa branch fora desses prefixos.** Não é só convenção — é regra do
+repositório. `git push -u origin minha-branch-teste` volta com
+`Cannot create ref due to creations being restricted`. Renomeie com
+`git branch -m <novo-nome>` e empurre de novo.
+
 **Em branch de experimento (`exp/`), inclua suas iniciais.** Como combinamos que
 mais de uma pessoa pode atacar a mesma tarefa para comparar resultados, é isso
 que impede duas branches com o mesmo nome — `exp/dsp-gradcam` e
