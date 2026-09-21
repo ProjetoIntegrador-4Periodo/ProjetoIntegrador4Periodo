@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+title: >-
+  Detecção de Câncer de Mama por Visão Computacional com
+  Inteligência Artificial
+message: Se este trabalho for útil para sua pesquisa, por favor cite-o.
+type: software
+authors:
+  - family-names: Specia
+    given-names: Davi
+  - family-names: Margraf
+    given-names: Jhonatan da Silva
+  - family-names: Mainardi
+    given-names: Bruno Nava
+  - family-names: Geska
+    given-names: Kaique Vinicius
+  - family-names: Ibarrola
+    given-names: Victor de Oliveira
+  - family-names: Serschon
+    given-names: Thales
+repository-code: >-
+  https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo
+abstract: >-
+  Sistema baseado em Deep Learning para detecção de câncer de mama em
+  mamografias digitais, com foco em explicabilidade (XAI) e avaliação da
+  confiança e calibração das predições. Desenvolvido na disciplina de
+  Projeto Integrador. Trabalho acadêmico, sem finalidade diagnóstica.
+keywords:
+  - breast cancer detection
+  - mammography
+  - deep learning
+  - computer vision
+  - explainable ai
+  - medical imaging
+license: MIT
+version: 0.1.0
+date-released: "2026-09-21"
