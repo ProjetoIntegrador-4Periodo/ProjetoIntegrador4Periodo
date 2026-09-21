@@ -77,12 +77,10 @@ jobs:
             exit 1
           fi
 
-          # Pré-carrega as reações para o time só clicar no emoji.
-          # A apuração descarta os votos do bot, então isso não conta.
-          for r in "+1" hooray heart eyes; do
-            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$numero/reactions" \
-              -f content="$r" --silent
-          done
+          # Nada de pré-carregar reações: elas apareceriam no contador da issue
+          # e qualquer pessoa lendo veria "1" em cada dia sem ninguém ter votado.
+          # A apuração até descartava esses votos, mas o número na tela mentia.
+          # A tabela no corpo já diz qual emoji usar.
           echo "Enquete aberta: issue #$numero ($url)"
 
   apurar:
