@@ -1,7 +1,7 @@
 # 🩺 Detecção de Câncer de Mama por Visão Computacional com Inteligência Artificial
 
 [![CI](https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo/actions/workflows/ci.yml/badge.svg)](https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo/actions/workflows/ci.yml)
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![Código: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Licença: MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green.svg)](LICENSE)
 
@@ -50,7 +50,7 @@ O projeto contempla todas as etapas necessárias para o desenvolvimento de uma s
 
 | Camada | Ferramentas |
 |--------|-------------|
-| Linguagem | Python 3.11 |
+| Linguagem | Python 3.12 |
 | Deep Learning | PyTorch, torchvision, timm |
 | Imagens médicas | pydicom, pylibjpeg, OpenCV, Pillow |
 | Análise de dados | NumPy, pandas, scikit-learn, SciPy |

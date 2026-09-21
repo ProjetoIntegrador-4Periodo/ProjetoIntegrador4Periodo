@@ -2,14 +2,14 @@
 name = "deteccao-cancer-mama"
 version = "0.1.0"
 description = "Detecção de câncer de mama em mamografias digitais com Deep Learning e explicabilidade"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 
 # ─────────────────────────────────────────────────────────────
 # Ruff — linter (substitui flake8/isort)
 # ─────────────────────────────────────────────────────────────
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 extend-exclude = ["data", "models", "notebooks", ".venv"]
 
 [tool.ruff.lint]
@@ -34,7 +34,7 @@ known-first-party = ["src"]
 # ─────────────────────────────────────────────────────────────
 [tool.black]
 line-length = 100
-target-version = ["py311"]
+target-version = ["py312"]
 extend-exclude = "(data|models|\\.venv)/"
 
 # ─────────────────────────────────────────────────────────────
