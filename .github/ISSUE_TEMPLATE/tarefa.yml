@@ -1,0 +1,47 @@
+name: Tarefa
+description: Uma atividade da sprint
+title: "[Tarefa]: "
+labels: ["tarefa"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Dados / EDA
+        - Pré-processamento
+        - Modelagem
+        - Avaliação
+        - Explicabilidade (XAI)
+        - MLOps
+        - CI/CD
+        - Documentação
+    validations:
+      required: true
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: O que precisa ser feito
+      placeholder: Descreva a atividade de forma que outra pessoa consiga executar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critério de aceite
+      description: Como sabemos que terminou?
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: paralelo
+    attributes:
+      label: Trabalho paralelo
+      description: Combinamos que mais de uma pessoa pode pegar a mesma tarefa para comparar resultados.
+      options:
+        - label: Esta tarefa pode ser feita em paralelo por mais de uma pessoa

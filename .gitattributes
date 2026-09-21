@@ -1,0 +1,28 @@
+# Normaliza fim de linha para todo mundo (Windows/macOS/Linux)
+* text=auto eol=lf
+
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+*.sh   text eol=lf
+
+# Binários — não tentar fazer diff nem normalizar
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.dcm  binary
+*.pt   binary
+*.pth  binary
+*.onnx binary
+
+# Notebooks: diff fica ilegível; trate como texto mas sem merge automático
+*.ipynb text merge=nbmerge linguist-documentation
+
+# Não contar notebooks/docs nas estatísticas de linguagem do GitHub
+docs/**     linguist-documentation
+notebooks/** linguist-documentation

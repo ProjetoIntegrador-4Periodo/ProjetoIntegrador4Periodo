@@ -1,0 +1,42 @@
+# Configuração base dos experimentos.
+# Para variar hiperparâmetros, copie este arquivo em configs/<seu_experimento>.yaml
+# e registre o resultado no PR. Assim dá para comparar rodadas de pessoas diferentes.
+
+experimento:
+  nome: baseline
+  responsavel: ""      # seu usuário do GitHub
+  semente: 42
+
+dados:
+  dataset: rsna-breast-cancer-detection
+  tamanho_imagem: [1024, 512]   # altura, largura
+  split:
+    treino: 0.70
+    validacao: 0.15
+    teste: 0.15
+  estratificar_por: cancer
+
+treino:
+  backbone: efficientnet_b0
+  pretrained: true
+  epocas: 15
+  batch_size: 16
+  otimizador: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.00001
+  scheduler: cosine
+  early_stopping_paciencia: 5
+  precisao_mista: true
+
+avaliacao:
+  metricas: [pf1, auroc, sensibilidade, especificidade]
+  calibracao: [ece, brier]
+  limiar_decisao: 0.5
+
+explicabilidade:
+  metodos: [gradcam, gradcam_plus_plus, shap]
+  camada_alvo: ""     # preencher conforme o backbone escolhido
+  metricas: [deletion, insertion, pointing_game]
+
+saidas:
+  mlflow_experiment: deteccao-cancer-mama

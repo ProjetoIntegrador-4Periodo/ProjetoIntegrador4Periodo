@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Dúvida ou discussão do time
+    url: https://github.com/ProjetoIntegrador-4Periodo/ProjetoIntegrador4Periodo/discussions
+    about: Para perguntas abertas e decisões em debate, use Discussions.

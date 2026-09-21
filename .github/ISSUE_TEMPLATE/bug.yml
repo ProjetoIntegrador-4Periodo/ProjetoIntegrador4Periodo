@@ -1,0 +1,41 @@
+name: Bug
+description: Algo quebrado no código ou no pipeline
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: O que acontece
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproducao
+    attributes:
+      label: Como reproduzir
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que deveria acontecer
+    validations:
+      required: true
+
+  - type: textarea
+    id: erro
+    attributes:
+      label: Mensagem de erro / traceback
+      render: shell
+
+  - type: input
+    id: ambiente
+    attributes:
+      label: Ambiente
+      placeholder: "macOS 15 / Python 3.11 / torch 2.3.1 / CPU"

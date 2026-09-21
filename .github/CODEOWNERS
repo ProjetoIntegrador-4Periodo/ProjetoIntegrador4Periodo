@@ -1,0 +1,17 @@
+# Toda alteração precisa da revisão do Davi (responsável por CI/CD e integração).
+# O GitHub adiciona automaticamente quem estiver aqui como revisor do PR.
+*                       @davidogral
+
+# Infraestrutura, pipeline e governança do repositório
+/.github/               @davidogral
+/Makefile               @davidogral
+/pyproject.toml         @davidogral
+/requirements*.txt      @davidogral
+/.pre-commit-config.yaml @davidogral
+
+# MLOps — Bruno acompanha configs de experimento e rastreamento
+/configs/               @davidogral @mainardikk
+/src/models/            @davidogral @mainardikk
+
+# Documentação e organização — Kaique (Scrum Master) e Jhonatan (líder)
+/docs/                  @davidogral @KaiqueGeska @Jhonatan-Margraf
