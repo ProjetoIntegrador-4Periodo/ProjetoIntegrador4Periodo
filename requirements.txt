@@ -14,6 +14,7 @@ pylibjpeg==2.1.0
 pylibjpeg-libjpeg==2.4.0
 pylibjpeg-openjpeg==2.5.0
 opencv-python-headless==5.0.0.93
+scikit-image==0.26.0
 Pillow==12.3.0
 
 # --- Deep Learning (PyTorch) ---
