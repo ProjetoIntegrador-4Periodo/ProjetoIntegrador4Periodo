@@ -1,0 +1,24 @@
+# Dependências do pipeline de divisão e pré-processamento do RSNA
+# (scripts/rsna_dividir.py e scripts/rsna_preprocessar.py).
+# Subconjunto do requirements.txt, nas mesmas versões, sem torch/shap/mlflow.
+# Instale com:  pip install -r requirements-pipeline.txt
+# Python alvo: 3.12
+
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+opencv-python-headless==5.0.0.93
+pyyaml==6.0.3
+tqdm==4.70.1
+matplotlib==3.11.2
+
+# DICOM: o RSNA vem comprimido em JPEG Lossless (site 1) e JPEG 2000 (site 2).
+# pylibjpeg-libjpeg decodifica JPEG Lossless e JPEG-LS; pylibjpeg-openjpeg, JPEG 2000.
+pydicom==3.0.2
+pylibjpeg==2.1.0
+pylibjpeg-libjpeg==2.4.0
+pylibjpeg-openjpeg==2.5.0
+
+# Testes
+pytest==9.1.1

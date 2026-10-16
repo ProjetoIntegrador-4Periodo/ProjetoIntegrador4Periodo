@@ -1,0 +1,59 @@
+# Pipeline de divisão e pré-processamento (Etapa 1) do RSNA Screening Mammography.
+# Para regenerar em outra máquina, basta trocar a seção `caminhos`.
+# Qualquer outra mudança gera dados diferentes: registre no PR.
+
+caminhos:
+  # Pasta do Kaggle com train.csv e train_images/<patient_id>/<image_id>.dcm (só leitura)
+  rsna_dir: /media/user/OS1/RSNA/data/rsna-breast-cancer-detection
+  # CSVs da divisão, versionados no repositório (relativo à raiz do repo)
+  splits_dir: splits/rsna_fold0
+  # Raiz dos PNGs e do manifest processado
+  saida_dir: /mnt/SSD2/rsna_fold0_etapa1
+
+semente: 42
+
+divisao:
+  views: [CC, MLO]
+  remover_implante: true
+  # Exclusão manual por image_id, para erros de rótulo achados na revisão visual.
+  # Toda linha leva o motivo em comentário.
+  excluir_imagens:
+    # Paciente 26515 (site 1, aparelho 93): exame de implante com implant = 0 nas 12
+    # imagens do train.csv. Achado na revisão visual da amostra em 2026-10-16.
+    - 390614965   # paciente 26515, L CC: implante visível
+    - 490153474   # paciente 26515, L CC: implante visível
+    - 1998227809  # paciente 26515, L CC: incidência com implante afastado (Eklund)
+    - 802190853   # paciente 26515, L MLO: implante visível
+    - 924533584   # paciente 26515, L MLO: incidência com implante afastado (Eklund)
+    - 1246187877  # paciente 26515, L MLO: incidência com implante afastado (Eklund)
+    - 776661004   # paciente 26515, R CC: implante visível
+    - 2038993283  # paciente 26515, R CC: implante visível
+    - 2069714608  # paciente 26515, R CC: incidência com implante afastado (Eklund)
+    - 100022049   # paciente 26515, R MLO: incidência com implante afastado (Eklund)
+    - 921366354   # paciente 26515, R MLO: incidência com implante afastado (Eklund)
+    - 1126783567  # paciente 26515, R MLO: implante visível
+  faixas_etarias: [40, 50, 60, 70, 80]   # limites: <40, 40-49, ..., 80+
+  # Estrato (câncer + site + faixa) com menos pacientes que isso é fundido
+  # com a faixa etária vizinha do mesmo câncer + site.
+  min_pacientes_estrato: 10
+  frac_teste: 0.15
+  n_folds: 5
+  fold_validacao: 0
+  # Negativos do treino no pool fixo, já contando os obrigatórios
+  # (difficult_negative_case ou biopsy).
+  pool_negativos: 22000
+
+preprocessamento:
+  lado_maior: 1536
+  margem_crop: 12
+  percentil_baixo: 0.1
+  percentil_alto: 99.9
+  # Fora desta faixa de cobertura da máscara no recorte, a imagem é marcada suspeita
+  cobertura_min: 0.25
+  cobertura_max: 0.92
+  # Espaçamento usado quando o DICOM não traz ImagerPixelSpacing/PixelSpacing
+  spacing_padrao_mm: 0.065238
+  # A silhueta da mama é calculada numa cópia reduzida por este fator (velocidade)
+  fator_mascara: 4
+  workers: 8
+  amostra_n: 50

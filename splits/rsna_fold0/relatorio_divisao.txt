@@ -1,0 +1,67 @@
+train.csv: 54706 imagens, 11913 pacientes | semente 42
+
+======================================================================
+LIMPEZA
+======================================================================
+                     imagens  mamas  pacientes  positivas_removidas  mamas_removidas  pacientes_removidas
+regra                                                                                                    
+view fora de CC/MLO       38     36         28                    2                0                    0
+implant == 1            1477    342        171                   13              342                  171
+
+restam: 53191 imagens, 23484 mamas, 11742 pacientes, 1143 imagens com câncer
+
+======================================================================
+ESTRATOS (câncer da paciente + site + faixa etária)
+======================================================================
+faixas fundidas (estratos com < 10 pacientes):
+  cancer=0 site=1: 50-59|ausente (1590 pacientes)
+  cancer=1 site=1: <40|40-49 (30 pacientes)
+  cancer=1 site=2: 40-49|50-59 (83 pacientes)
+  cancer=1 site=2: 70-79|80+ (48 pacientes)
+
+19 estratos; menores:
+1_1_70-79        73
+0_2_80+          51
+1_2_70-79|80+    48
+1_1_50-59        48
+1_1_<40|40-49    30
+1_1_80+          23
+
+======================================================================
+EXCLUSÃO MANUAL (depois da divisão, lista na config)
+======================================================================
+                          imagens  mamas  pacientes  positivas_removidas  mamas_removidas  pacientes_removidas
+regra                                                                                                         
+exclusão manual (config)       12      2          1                    0                2                    1
+restam: 53179 imagens, 11741 pacientes
+
+======================================================================
+VALIDAÇÃO
+======================================================================
+sem vazamento: nenhuma paciente em mais de um split ou fold
+
+por split:
+       pacientes  imagens  pac_cancer_%  img_cancer_%  site1_%  site2_%  40-49_%  50-59_%  60-69_%  70-79_%  80+_%  <40_%  ausente_%
+test        1761     7992          4.03          2.01    48.10    51.90    17.15    34.98    33.67    11.36   1.99   0.80       0.06
+train       7984    36149          4.12          2.16    48.10    51.90    17.20    34.86    33.65    11.46   1.99   0.78       0.06
+val         1996     9038          4.16          2.24    48.05    51.95    17.03    35.02    33.72    11.37   1.95   0.80       0.10
+
+por fold (-1 = teste):
+    pacientes  imagens  pac_cancer_%  img_cancer_%  site1_%  site2_%  40-49_%  50-59_%  60-69_%  70-79_%  80+_%  <40_%  ausente_%
+-1       1761     7992          4.03          2.01    48.10    51.90    17.15    34.98    33.67    11.36   1.99   0.80       0.06
+ 0       1996     9038          4.16          2.24    48.05    51.95    17.03    35.02    33.72    11.37   1.95   0.80       0.10
+ 1       1995     9034          4.06          2.17    48.07    51.93    17.24    34.79    33.63    11.48   2.01   0.75       0.10
+ 2       1997     9042          4.11          2.12    48.02    51.98    17.23    34.90    33.65    11.47   2.00   0.75       0.00
+ 3       1996     9036          4.16          2.17    48.20    51.80    17.18    34.87    33.67    11.47   1.95   0.75       0.10
+ 4       1996     9037          4.16          2.17    48.10    51.90    17.13    34.87    33.67    11.42   2.00   0.85       0.05
+
+======================================================================
+SELEÇÃO DO FOLD 0
+======================================================================
+treino: 780 positivos + 22000 negativos no pool (5097 obrigatórios por difficult/biopsy)
+       imagens  pacientes  positivas  pct_cancer
+split                                           
+test      7992       1761        161        2.01
+train    22780       7824        780        3.42
+val       9038       1996        202        2.24
+total no manifest_fold0: 39810 imagens
