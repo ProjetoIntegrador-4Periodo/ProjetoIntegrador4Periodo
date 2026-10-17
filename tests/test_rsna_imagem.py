@@ -19,6 +19,7 @@ from src.data.rsna_imagem import (  # noqa: E402
     aplicar_radiometria,
     fundo_escuro,
     garantir_fundo_escuro,
+    nivel_do_ar_ruidoso,
     parede_a_direita,
     processar,
     redimensionar,
@@ -163,6 +164,37 @@ def test_espelhamento_pela_medida_e_nao_pela_tag(parede, tag, espelha, diverge):
     assert meta["diverge_tag"] is diverge
     # Depois de espelhar, a parede torácica fica sempre à esquerda.
     assert not parede_a_direita(mascara > 0)
+
+
+def com_ar_ruidoso(pixels, semente=0):
+    """Como o aparelho 210: ar em ~1% da escala com ruído, só os cantos em 0."""
+    rng = np.random.default_rng(semente)
+    altura, largura = pixels.shape
+    ar = np.clip(rng.normal(40, 8, pixels.shape), 1, None)
+    imagem = np.where(pixels > 0, pixels, ar)
+    yy, xx = np.mgrid[:altura, :largura]
+    canto = 40
+    for cy, cx in ((0, 0), (0, largura), (altura, 0), (altura, largura)):
+        imagem[(yy - cy) ** 2 + (xx - cx) ** 2 < canto**2] = 0
+    return imagem.astype(np.uint16)
+
+
+@pytest.mark.parametrize("parede", ["esquerda", "direita"])
+def test_ar_ruidoso_nao_entra_na_mascara_nem_decide_o_espelhamento(parede):
+    ds = dicom_sintetico(com_ar_ruidoso(mama_sintetica(parede=parede)))
+
+    _, mascara, meta = processar(ds, "L", PARAMETROS)
+
+    assert meta["espelhada"] is (parede == "direita")
+    assert not parede_a_direita(mascara > 0)
+    assert not meta["suspeita"]
+
+
+def test_ar_saturado_nao_muda_o_limiar():
+    ds = dicom_sintetico(mama_sintetica())
+    imagem, _ = aplicar_radiometria(ds)
+
+    assert nivel_do_ar_ruidoso(imagem / imagem.max()) == 0.0
 
 
 # --- Cobertura, crop e saída -----------------------------------------------

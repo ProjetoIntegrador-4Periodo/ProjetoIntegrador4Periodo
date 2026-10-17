@@ -182,6 +182,21 @@ def maior_componente(mascara: np.ndarray) -> np.ndarray:
     return rotulada == int(np.argmax(tamanhos))
 
 
+def nivel_do_ar_ruidoso(preliminar: np.ndarray) -> float:
+    """
+    Teto do pico do ar quando ele não está saturado em zero; 0 caso contrário.
+
+    Na maioria dos aparelhos o janelamento satura o ar e o pico do histograma
+    cai no primeiro bin (< 0,1% da escala): aí devolve 0 e o limiar não muda.
+    No aparelho 210 (site 1) o ar é ruidoso, entre ~0,1% e ~2%, e só os cantos
+    fora do detector são zero; o limiar fixo de até 2% deixava o ar passar como
+    tecido, a máscara cobria a chapa e o espelhamento virava sorteio.
+    """
+    contagem, bordas = np.histogram(preliminar, bins=100, range=(0.0, 0.1))
+    pico = int(np.argmax(contagem))
+    return 0.0 if pico == 0 else float(bordas[pico + 1])
+
+
 def criar_mascara(imagem: np.ndarray, fator: int = 1) -> np.ndarray:
     """
     Silhueta inteira da mama (tecido x fundo, não denso x adiposo).
@@ -211,6 +226,9 @@ def criar_mascara(imagem: np.ndarray, fator: int = 1) -> np.ndarray:
         return preliminar > 0
 
     limiar = float(np.clip(np.percentile(positivos, 0.5), 0.003, 0.02))
+    ar = nivel_do_ar_ruidoso(preliminar)
+    if ar > 0:
+        limiar = max(limiar, 2 * ar)
     mascara = maior_componente(preliminar > limiar)
 
     raio = max(5, int(round(min(mascara.shape) * 0.006)))

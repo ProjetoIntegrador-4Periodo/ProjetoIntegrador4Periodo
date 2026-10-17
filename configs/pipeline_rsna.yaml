@@ -32,6 +32,8 @@ divisao:
     - 100022049   # paciente 26515, R MLO: incidência com implante afastado (Eklund)
     - 921366354   # paciente 26515, R MLO: incidência com implante afastado (Eklund)
     - 1126783567  # paciente 26515, R MLO: implante visível
+    # Paciente 822 (site 1, aparelho 210). Achado na revisão das suspeitas em 2026-10-16.
+    - 1942326353  # paciente 822, L MLO: DICOM sem exposição (pixels só de 13 a 19 em 10 bits)
   faixas_etarias: [40, 50, 60, 70, 80]   # limites: <40, 40-49, ..., 80+
   # Estrato (câncer + site + faixa) com menos pacientes que isso é fundido
   # com a faixa etária vizinha do mesmo câncer + site.

@@ -114,6 +114,12 @@ python -m scripts.verificar_checksums /caminho/no/hd/rsna_fold0_etapa1
   dois cantos da parede e há marcadores brancos em cantos.
 - **Espelhamento.** Pelo lado com mais tecido, não pela tag: no site 1 a tag
   diverge do lado real da parede em ~30% das imagens (`diverge_tag`).
+- **Ar ruidoso (aparelho 210).** Nesse aparelho o ar não satura em zero (fica
+  entre ~0,1% e 2% da escala). A máscara sobe o limiar para o dobro do pico do
+  ar quando ele não está no primeiro bin; nos outros aparelhos nada muda. Sem
+  isso, a máscara cobria a chapa e ~60% das imagens saíam com a parede à
+  direita. As 812 imagens do 210 da primeira entrega foram refeitas; a lista
+  está em `reprocessamento.csv` na pasta de saída.
 - **Spacing.** 6 aparelhos não gravam o espaçamento; usa 0,065238 mm e marca
   `spacing_estimado`. `spacing_resultante_mm` já considera o redimensionamento
   (é o que a Etapa 2 usa para o top-hat de 0,6 mm).
