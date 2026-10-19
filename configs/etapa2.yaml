@@ -1,0 +1,36 @@
+# Etapa 2 do pré-processamento do RSNA: PNG da Etapa 1 -> tensor de entrada do modelo.
+# Roda em tempo de carregamento (Dataset), sem gravar nada em disco.
+# Para outra máquina, basta trocar a seção `caminhos`. As seções `entrada` e
+# `augmentation` vão junto com cada checkpoint (ConfigEtapa2.para_checkpoint).
+
+caminhos:
+  # Saída da Etapa 1: anatomia/, mascara/ e manifest_processado.csv
+  etapa1_dir: /mnt/SSD2/rsna_fold0_etapa1
+  # Grades e medições do script de verificação (nada aqui entra no treino)
+  verificacao_dir: /mnt/SSD2/rsna_fold0_etapa2_verificacao
+
+entrada:
+  altura: 768
+  largura: 512
+  # "cinza": canal repetido 3x. "realce_3canais" (anatomia, top-hat, CLAHE) ainda não existe.
+  representacao: cinza
+  # Normalização do ImageNet, por canal
+  media: [0.485, 0.456, 0.406]
+  desvio: [0.229, 0.224, 0.225]
+  # Reservado para "realce_3canais": raio do top-hat em mm (usa o spacing do canvas)
+  tophat_mm: 0.6
+
+# Desligada por padrão; o script de treino liga só no split de treino.
+# Nunca há flip horizontal: a parede torácica fica sempre à esquerda.
+augmentation:
+  ativa: false
+  prob_flip_vertical: 0.5
+  rotacao_graus: 10       # uniforme em [-10, 10], em torno do meio da parede
+  escala: [0.9, 1.1]
+  translacao: 0.05        # fração da altura/largura do canvas, em cada eixo
+  brilho: 0.1             # soma uniforme em [-0.1, 0.1] da escala, só dentro da máscara
+  contraste: [0.9, 1.1]   # multiplica em torno da média do tecido, só dentro da máscara
+
+carregamento:
+  workers: 8
+  batch_size: 12   # 16 não cabe nos 8 GB da RTX 4060 em 768x512

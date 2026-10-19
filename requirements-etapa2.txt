@@ -1,0 +1,13 @@
+# Dependências da Etapa 2 (src/data/rsna_entrada.py, src/data/rsna_dataset.py e
+# scripts/rsna_etapa2_verificar.py): as da Etapa 1 mais torch e torchvision.
+# Versões iguais às do requirements.txt.
+#
+# Instale o torch pelo índice oficial ANTES deste arquivo. Com GPU NVIDIA (driver
+# com CUDA 13), por exemplo:
+#   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cu130
+# Driver mais antigo: troque cu130 por cu126. Sem GPU: troque por cpu.
+# Python alvo: 3.12
+
+-r requirements-pipeline.txt
+torch==2.14.0
+torchvision==0.29.0
