@@ -120,6 +120,14 @@ python -m scripts.verificar_checksums /caminho/no/hd/rsna_fold0_etapa1
   isso, a máscara cobria a chapa e ~60% das imagens saíam com a parede à
   direita. As 812 imagens do 210 da primeira entrega foram refeitas; a lista
   está em `reprocessamento.csv` na pasta de saída.
+- **Chapa e letras (aparelho 210).** Com o limiar elevado pelo ar ruidoso, a
+  borda clara da chapa e as letras do marcador ainda passavam, encostavam na
+  mama e o preenchimento por linha levava a máscara até a borda da chapa. Só
+  nesse caso, uma abertura por disco apaga o que é mais fino que ~2,5% do lado
+  menor (a faixa da chapa) antes do maior componente. Fora da imagem conta como
+  fundo, porque a chapa costuma ser a última linha do DICOM. As 811 imagens do
+  210 foram refeitas de novo (segunda linha por imagem no `reprocessamento.csv`);
+  as que ainda mostravam letras foram excluídas pela config.
 - **Spacing.** 6 aparelhos não gravam o espaçamento; usa 0,065238 mm e marca
   `spacing_estimado`. `spacing_resultante_mm` já considera o redimensionamento
   (é o que a Etapa 2 usa para o top-hat de 0,6 mm).

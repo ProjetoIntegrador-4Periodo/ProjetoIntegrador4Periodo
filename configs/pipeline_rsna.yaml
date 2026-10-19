@@ -34,6 +34,31 @@ divisao:
     - 1126783567  # paciente 26515, R MLO: implante visível
     # Paciente 822 (site 1, aparelho 210). Achado na revisão das suspeitas em 2026-10-16.
     - 1942326353  # paciente 822, L MLO: DICOM sem exposição (pixels só de 13 a 19 em 10 bits)
+    # Aparelho 210 (site 1): artefato da chapa que a máscara não tira sem cortar mama
+    # (a mama encosta nele). Achados na revisão depois de sem_estruturas_finas, em 2026-10-18.
+    - 887676983   # paciente 5044, L CC: toco da borda da chapa sobre o tecido
+    - 1423709598  # paciente 5244, L CC: toco da borda da chapa sobre o tecido
+    - 946297700   # paciente 10741, L MLO: toco da borda da chapa sobre o tecido
+    - 1552124440  # paciente 10741, R MLO: borda clara da chapa embaixo e na lateral
+    - 1304625366  # paciente 19268, L MLO: toco da borda da chapa sobre o tecido
+    - 1483474091  # paciente 24636, R MLO: toco da borda da chapa sobre o tecido
+    - 391040684   # paciente 28028, L MLO: toco da borda da chapa sobre o tecido
+    - 505557225   # paciente 28562, L MLO: toco da borda da chapa sobre o tecido
+    - 1654908476  # paciente 36029, L CC: toco da borda da chapa sobre o tecido
+    - 285757075   # paciente 37466, L CC: toco da borda da chapa sobre o tecido
+    - 1401412850  # paciente 39594, R CC: toco da borda da chapa sobre o tecido
+    - 1261971780  # paciente 44628, L CC: toco da borda da chapa sobre o tecido
+    - 1469650023  # paciente 45719, L CC: toco da borda da chapa sobre o tecido
+    - 1854437749  # paciente 46669, L MLO: toco da borda da chapa sobre o tecido
+    - 273878904   # paciente 55139, L CC: toco da borda da chapa sobre o tecido
+    - 286768249   # paciente 55139, R MLO: pedaço claro da borda da chapa embaixo
+    - 118621619   # paciente 57468, L CC: letras do marcador dentro da máscara
+    - 977545628   # paciente 57468, L MLO: letras do marcador dentro da máscara
+    - 107213666   # paciente 57468, R CC: toco da borda da chapa sobre o tecido
+    - 1263889058  # paciente 57468, R MLO: letras do marcador e borda da chapa
+    - 1720372073  # paciente 57468, R MLO: canto claro da chapa embaixo
+    - 1023099060  # paciente 65346, R MLO: borda clara da chapa embaixo
+    - 1338896263  # paciente 65346, L MLO: canto claro da chapa embaixo (duvidoso)
   faixas_etarias: [40, 50, 60, 70, 80]   # limites: <40, 40-49, ..., 80+
   # Estrato (câncer + site + faixa) com menos pacientes que isso é fundido
   # com a faixa etária vizinha do mesmo câncer + site.

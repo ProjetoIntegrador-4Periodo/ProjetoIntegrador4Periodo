@@ -17,12 +17,14 @@ from pydicom.uid import ExplicitVRLittleEndian  # noqa: E402
 from src.data.rsna_imagem import (  # noqa: E402
     Parametros,
     aplicar_radiometria,
+    criar_mascara,
     fundo_escuro,
     garantir_fundo_escuro,
     nivel_do_ar_ruidoso,
     parede_a_direita,
     processar,
     redimensionar,
+    sem_estruturas_finas,
     spacing_mm,
 )
 
@@ -188,6 +190,57 @@ def test_ar_ruidoso_nao_entra_na_mascara_nem_decide_o_espelhamento(parede):
     assert meta["espelhada"] is (parede == "direita")
     assert not parede_a_direita(mascara > 0)
     assert not meta["suspeita"]
+
+
+def chapa_com_letras(pixels, recuo=45):
+    """
+    Moldura fina e clara da chapa e um "L" de traço fino preso nela.
+
+    A moldura fica fora dos cantos que ``com_ar_ruidoso`` zera, fechada como
+    no 210, e cruza a mama na parede: sem a correção, a letra e a borda da
+    direita entram no maior componente e o preenchimento leva a máscara até lá.
+    """
+    com_chapa = pixels.copy()
+    altura, largura = pixels.shape
+    cima, baixo, direita = recuo, altura - recuo, largura - recuo
+    claro = 3000
+    com_chapa[cima : cima + 2, :direita] = claro
+    com_chapa[baixo - 2 : baixo, :direita] = claro
+    com_chapa[cima:baixo, direita - 2 : direita] = claro
+    com_chapa[cima + 5 : cima + 30, direita - 20 : direita - 17] = claro  # haste do "L"
+    com_chapa[cima + 27 : cima + 30, direita - 20 : direita] = claro  # pé, preso na borda
+    return com_chapa
+
+
+def test_borda_da_chapa_e_letras_saem_da_mascara_sem_cortar_a_mama():
+    # Chapa mais larga que a mama, como no 210: o ar domina o histograma.
+    mama = mama_sintetica(largura=320, raio=195)
+    ds = dicom_sintetico(com_ar_ruidoso(chapa_com_letras(mama)))
+    imagem, _ = garantir_fundo_escuro(*aplicar_radiometria(ds))
+
+    mascara = criar_mascara(imagem)
+
+    assert not mascara[50:75, 255:258].any(), "letra dentro da máscara"
+    assert not mascara[100:300, 230:].any(), "borda da direita (e o ar até ela) na máscara"
+    assert not mascara[353:357, 160:].any(), "borda de baixo longe da mama"
+    # Linha da pele: todo o tecido fora dos cantos (raio 40) que com_ar_ruidoso zera.
+    tecido = (mama > 0)[45:355]
+    assert mascara[45:355][tecido].mean() > 0.999, "a máscara cortou tecido da mama"
+    assert mascara[45:355, 0].all(), "a parede torácica encostada na borda foi erodida"
+
+
+def test_linha_na_borda_da_imagem_sai_e_a_parede_fica():
+    # Como no 210: a borda da chapa é a última linha do DICOM e encosta na mama.
+    mascara = np.zeros((200, 150), bool)
+    yy, xx = np.mgrid[:200, :150]
+    mascara[((yy - 100) / 95) ** 2 + (xx / 100) ** 2 <= 1] = True  # mama na parede (x = 0)
+    mascara[194:, :] = True  # linha da chapa, 6 px, na borda de baixo
+
+    aberta = sem_estruturas_finas(mascara, 4)
+
+    assert not aberta[196:, 60:].any(), "linha da chapa na borda sobreviveu"
+    assert aberta[10:190, 0].all(), "a parede encostada na borda foi comida"
+    assert aberta[mascara & (yy < 190)].mean() > 0.99
 
 
 def test_ar_saturado_nao_muda_o_limiar():

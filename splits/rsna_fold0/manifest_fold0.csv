@@ -270,6 +270,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 508,1041427602,R,CC,67.0,2,21,0,False,0,train,2,True
 508,1419505936,L,CC,67.0,2,21,0,False,0,train,2,True
 508,2126954428,R,MLO,67.0,2,21,0,False,0,train,2,True
+522,637965786,R,MLO,48.0,1,190,0,False,0,train,4,True
 522,1611600975,L,MLO,48.0,1,190,0,False,0,train,4,True
 526,618047602,R,MLO,71.0,1,49,0,True,0,train,2,True
 526,978068785,R,CC,71.0,1,49,0,True,0,train,2,True
@@ -314,6 +315,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 602,312995648,L,MLO,49.0,2,48,0,False,0,train,2,True
 602,617891556,R,CC,49.0,2,48,0,True,0,train,2,True
 602,2138348289,L,CC,49.0,2,48,0,False,0,train,2,True
+604,822592646,R,MLO,54.0,2,21,0,False,0,train,1,True
 604,1248029543,L,CC,54.0,2,21,0,True,0,train,1,True
 604,1657989982,R,CC,54.0,2,21,0,False,0,train,1,True
 604,2030881414,L,MLO,54.0,2,21,0,True,0,train,1,True
@@ -2942,6 +2944,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 5028,1021788929,L,CC,54.0,2,48,0,True,0,val,0,False
 5028,1611890082,L,MLO,54.0,2,48,0,True,0,val,0,False
 5028,1740872877,R,CC,54.0,2,48,0,False,0,val,0,False
+5038,964437626,R,MLO,59.0,2,48,0,False,0,train,3,True
 5038,1083018529,L,MLO,59.0,2,48,0,True,0,train,3,True
 5038,1232879856,L,CC,59.0,2,48,0,True,0,train,3,True
 5038,2039921709,R,CC,59.0,2,48,0,False,0,train,3,True
@@ -2955,7 +2958,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 5041,1188529048,L,CC,71.0,1,49,0,True,1,train,2,True
 5041,1541151459,L,MLO,71.0,1,49,0,True,1,train,2,True
 5044,209002377,L,MLO,75.0,1,210,0,False,0,train,1,True
-5044,887676983,L,CC,75.0,1,210,0,False,0,train,1,True
 5052,102031961,R,MLO,38.0,1,49,0,False,0,test,-1,False
 5052,295421418,L,CC,38.0,1,49,0,False,0,test,-1,False
 5052,1556096735,L,MLO,38.0,1,49,0,False,0,test,-1,False
@@ -3055,7 +3057,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 5235,2069942168,R,CC,63.0,1,49,0,False,0,train,2,True
 5235,2141301728,L,MLO,63.0,1,49,1,False,1,train,2,False
 5244,663953227,L,MLO,51.0,1,210,0,False,0,train,3,True
-5244,1423709598,L,CC,51.0,1,210,0,False,0,train,3,True
 5244,1874353943,R,CC,51.0,1,210,0,False,0,train,3,True
 5244,1988146638,R,MLO,51.0,1,210,0,False,0,train,3,True
 5250,546925910,R,MLO,59.0,1,49,0,True,0,train,1,True
@@ -6433,9 +6434,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 10739,1858761621,L,MLO,46.0,1,49,0,False,0,test,-1,False
 10739,2068922317,L,MLO,46.0,1,49,0,False,0,test,-1,False
 10741,201713981,R,CC,63.0,1,210,0,False,0,val,0,False
-10741,946297700,L,MLO,63.0,1,210,0,False,0,val,0,False
 10741,993032636,L,MLO,63.0,1,210,0,False,0,val,0,False
-10741,1552124440,R,MLO,63.0,1,210,0,False,0,val,0,False
 10741,1616696471,R,CC,63.0,1,210,0,False,0,val,0,False
 10741,1826546638,R,MLO,63.0,1,210,0,False,0,val,0,False
 10741,2023041278,L,CC,63.0,1,210,0,False,0,val,0,False
@@ -7041,6 +7040,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 11768,1733062262,R,MLO,62.0,1,49,0,False,0,train,1,True
 11768,2059991431,L,CC,62.0,1,49,0,False,0,train,1,True
 11771,375415742,L,CC,68.0,2,21,0,False,0,train,1,True
+11771,515065090,L,MLO,68.0,2,21,0,False,0,train,1,True
 11771,872852438,R,CC,68.0,2,21,0,False,0,train,1,True
 11774,110571972,R,MLO,41.0,1,49,0,False,0,train,4,True
 11774,1741511677,L,CC,41.0,1,49,0,False,0,train,4,True
@@ -7518,6 +7518,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 12484,1212549258,L,CC,67.0,2,21,0,True,0,test,-1,False
 12484,1979373457,L,MLO,67.0,2,21,0,True,0,test,-1,False
 12485,480521895,R,MLO,76.0,1,49,0,False,0,train,3,True
+12485,1391106974,R,CC,76.0,1,49,0,False,0,train,3,True
 12485,1446339465,L,CC,76.0,1,49,1,False,1,train,3,False
 12485,1563019139,L,MLO,76.0,1,49,1,False,1,train,3,False
 12490,1000485729,R,CC,48.0,1,49,0,True,0,train,1,True
@@ -11592,7 +11593,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 19266,1048507518,L,CC,68.0,2,48,0,False,0,val,0,False
 19266,1339453486,R,MLO,68.0,2,48,0,False,0,val,0,False
 19266,1624743528,L,MLO,68.0,2,48,0,False,0,val,0,False
-19268,1304625366,L,MLO,53.0,1,210,0,False,0,train,2,True
 19268,1563935674,R,CC,53.0,1,210,0,False,0,train,2,True
 19268,2040244680,R,MLO,53.0,1,210,0,False,0,train,2,True
 19274,78100038,L,MLO,62.0,2,21,0,False,0,train,2,True
@@ -14871,7 +14871,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 24629,991752559,R,MLO,40.0,2,29,0,False,0,train,1,True
 24629,1607887114,R,CC,40.0,2,29,0,False,0,train,1,True
 24629,1709299752,L,CC,40.0,2,29,0,True,1,train,1,True
-24636,1483474091,R,MLO,37.0,1,210,0,False,0,train,4,True
 24636,1684930922,L,CC,37.0,1,210,0,False,0,train,4,True
 24643,150967517,R,MLO,83.0,1,49,0,False,0,train,2,True
 24643,333469112,L,MLO,83.0,1,49,1,False,1,train,2,False
@@ -17007,7 +17006,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 28015,1911736265,L,MLO,64.0,1,49,0,False,0,train,3,True
 28017,1568097327,R,CC,59.0,2,29,0,False,0,train,3,True
 28017,1877539186,L,MLO,59.0,2,29,0,False,0,train,3,True
-28028,391040684,L,MLO,45.0,1,210,0,False,0,train,1,True
 28028,937649993,L,MLO,45.0,1,210,0,False,0,train,1,True
 28028,2139390499,R,CC,45.0,1,210,0,False,0,train,1,True
 28040,1377360933,L,CC,59.0,2,29,0,False,0,train,4,True
@@ -17348,7 +17346,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 28546,172111410,R,MLO,41.0,2,48,0,True,0,train,3,True
 28546,229467345,R,CC,41.0,2,48,0,True,0,train,3,True
 28546,2088390027,L,MLO,41.0,2,48,0,False,0,train,3,True
-28562,505557225,L,MLO,50.0,1,210,0,False,0,train,1,True
 28562,1407486626,R,MLO,50.0,1,210,0,False,0,train,1,True
 28562,1544824062,R,MLO,50.0,1,210,0,False,0,train,1,True
 28563,1711348630,L,CC,38.0,1,49,0,False,0,train,2,True
@@ -21135,6 +21132,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 34845,2064148029,L,MLO,65.0,2,21,0,False,0,val,0,False
 34855,222315332,R,MLO,62.0,1,49,0,False,0,train,4,True
 34855,459790749,L,CC,62.0,1,49,0,False,0,train,4,True
+34855,1559623893,R,CC,62.0,1,49,0,False,0,train,4,True
 34860,64285361,L,MLO,51.0,2,48,0,False,0,train,4,True
 34860,233139303,R,MLO,51.0,2,48,0,True,1,train,4,True
 34860,840136342,R,CC,51.0,2,48,0,True,1,train,4,True
@@ -21830,7 +21828,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 36012,819191215,R,MLO,52.0,2,21,0,True,0,train,2,True
 36012,845581387,R,CC,52.0,2,21,0,True,0,train,2,True
 36029,804020910,R,CC,52.0,1,210,0,False,0,train,4,True
-36029,1654908476,L,CC,52.0,1,210,0,False,0,train,4,True
 36034,80000307,L,MLO,67.0,1,49,1,False,1,train,4,False
 36034,311083578,L,CC,67.0,1,49,1,False,1,train,4,False
 36034,810135280,L,CC,67.0,1,49,1,False,1,train,4,False
@@ -22735,7 +22732,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 37463,1170853933,L,CC,73.0,1,49,0,True,0,val,0,False
 37463,1721564980,R,CC,73.0,1,49,0,True,0,val,0,False
 37463,1913360645,R,CC,73.0,1,49,0,True,0,val,0,False
-37466,285757075,L,CC,50.0,1,210,0,False,0,train,1,True
 37466,875670030,R,MLO,50.0,1,210,0,False,0,train,1,True
 37467,243709522,R,MLO,62.0,2,48,0,False,0,test,-1,False
 37467,474761252,R,CC,62.0,2,48,0,False,0,test,-1,False
@@ -24035,7 +24031,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 39588,1952513628,L,CC,54.0,2,29,0,False,0,val,0,False
 39594,842333725,L,MLO,41.0,1,210,0,True,1,train,2,True
 39594,1393939705,L,CC,41.0,1,210,0,True,1,train,2,True
-39594,1401412850,R,CC,41.0,1,210,0,False,0,train,2,True
 39598,48112509,R,CC,80.0,1,49,0,False,0,test,-1,False
 39598,140289957,L,MLO,80.0,1,49,0,False,0,test,-1,False
 39598,453885740,L,MLO,80.0,1,49,0,False,0,test,-1,False
@@ -24920,6 +24915,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 41038,2124675566,R,MLO,70.0,1,49,0,False,0,train,3,True
 41039,797711044,L,MLO,70.0,1,49,0,True,0,train,1,True
 41039,1400970270,R,CC,70.0,1,49,0,False,0,train,1,True
+41039,1450864989,R,MLO,70.0,1,49,0,False,0,train,1,True
 41039,2105707158,L,CC,70.0,1,49,0,True,0,train,1,True
 41043,708732413,L,CC,64.0,2,21,0,False,0,test,-1,False
 41043,1406464584,L,MLO,64.0,2,21,0,False,0,test,-1,False
@@ -25027,6 +25023,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 41222,1634134111,L,MLO,56.0,2,48,0,False,0,train,1,True
 41222,1765823708,R,MLO,56.0,2,48,0,False,0,train,1,True
 41226,957538468,R,CC,57.0,1,49,0,False,0,train,4,True
+41226,1056281364,L,CC,57.0,1,49,0,False,0,train,4,True
 41226,1255289419,R,MLO,57.0,1,49,0,False,0,train,4,True
 41238,899283143,R,MLO,89.0,1,49,1,False,1,test,-1,False
 41238,1152046649,L,CC,89.0,1,49,0,False,0,test,-1,False
@@ -27067,7 +27064,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 44626,2020585648,L,MLO,53.0,1,49,0,False,0,test,-1,False
 44628,477109328,L,MLO,42.0,1,210,0,False,0,train,4,True
 44628,1171765221,R,CC,42.0,1,210,0,False,0,train,4,True
-44628,1261971780,L,CC,42.0,1,210,0,False,0,train,4,True
 44628,1558326698,R,CC,42.0,1,210,0,False,0,train,4,True
 44628,1663596331,L,CC,42.0,1,210,0,False,0,train,4,True
 44630,96899273,R,MLO,43.0,1,49,0,True,1,test,-1,False
@@ -27309,6 +27305,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 45013,2114777403,R,CC,62.0,2,21,0,False,0,train,4,True
 45013,2125539361,L,CC,62.0,2,21,0,False,0,train,4,True
 45014,656742434,R,CC,65.0,1,49,0,False,0,train,2,True
+45014,1180895542,L,MLO,65.0,1,49,0,False,0,train,2,True
 45014,1518298249,R,MLO,65.0,1,49,0,False,0,train,2,True
 45014,1890940677,L,MLO,65.0,1,49,0,False,0,train,2,True
 45018,417756784,L,MLO,44.0,2,48,0,False,0,test,-1,False
@@ -27670,6 +27667,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 45548,1062912336,L,CC,61.0,2,29,0,False,0,train,4,True
 45548,1074519882,L,MLO,61.0,2,29,0,False,0,train,4,True
 45548,1177740095,R,CC,61.0,2,29,0,False,0,train,4,True
+45552,1554570048,L,MLO,55.0,2,21,0,False,0,train,2,True
 45552,1946867391,R,MLO,55.0,2,21,0,False,0,train,2,True
 45557,277348103,R,MLO,60.0,2,21,0,False,0,train,2,True
 45557,465419580,L,MLO,60.0,2,21,0,False,0,train,2,True
@@ -27746,7 +27744,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 45719,779855542,R,CC,58.0,1,210,0,False,0,val,0,False
 45719,984466721,L,MLO,58.0,1,210,0,False,0,val,0,False
 45719,1124179071,R,CC,58.0,1,210,0,False,0,val,0,False
-45719,1469650023,L,CC,58.0,1,210,0,False,0,val,0,False
 45719,1615402099,L,CC,58.0,1,210,0,False,0,val,0,False
 45719,1755122385,L,MLO,58.0,1,210,0,False,0,val,0,False
 45719,2022845329,R,MLO,58.0,1,210,0,False,0,val,0,False
@@ -28296,7 +28293,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 46669,1199054191,R,MLO,39.0,1,210,0,False,0,train,1,True
 46669,1309053273,L,MLO,39.0,1,210,0,True,0,train,1,True
 46669,1532568626,R,CC,39.0,1,210,0,False,0,train,1,True
-46669,1854437749,L,MLO,39.0,1,210,0,True,0,train,1,True
 46669,1964159441,L,CC,39.0,1,210,0,True,0,train,1,True
 46671,46845470,L,MLO,38.0,1,49,0,False,0,val,0,False
 46671,1049651035,R,CC,38.0,1,49,0,True,0,val,0,False
@@ -30322,6 +30318,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 49827,1511177902,L,MLO,48.0,2,29,0,False,0,train,3,True
 49830,594958814,L,CC,64.0,1,49,0,False,0,train,3,True
 49830,1309756655,R,MLO,64.0,1,49,0,False,0,train,3,True
+49833,141692617,R,MLO,70.0,2,48,0,False,0,train,1,True
 49833,1124796766,R,CC,70.0,2,48,0,False,0,train,1,True
 49852,138411723,R,MLO,46.0,1,49,0,False,0,test,-1,False
 49852,629143003,L,CC,46.0,1,49,0,False,0,test,-1,False
@@ -31376,6 +31373,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 51680,1400559407,R,MLO,42.0,1,49,0,False,0,val,0,False
 51680,1781792062,R,CC,42.0,1,49,0,False,0,val,0,False
 51697,614234167,R,CC,69.0,1,49,1,False,1,train,2,False
+51697,1232552081,L,MLO,69.0,1,49,0,False,0,train,2,True
 51697,1244710301,R,MLO,69.0,1,49,1,False,1,train,2,False
 51697,1361957686,R,MLO,69.0,1,49,1,False,1,train,2,False
 51702,437523200,L,MLO,67.0,2,48,0,False,0,train,3,True
@@ -33378,8 +33376,6 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 55138,1594939845,R,CC,70.0,1,93,0,False,0,val,0,False
 55138,1635236409,R,MLO,70.0,1,93,0,False,0,val,0,False
 55138,1899408008,L,MLO,70.0,1,93,0,False,0,val,0,False
-55139,273878904,L,CC,59.0,1,210,0,False,0,val,0,False
-55139,286768249,R,MLO,59.0,1,210,0,False,0,val,0,False
 55139,507386246,R,CC,59.0,1,210,0,False,0,val,0,False
 55139,697683091,R,MLO,59.0,1,210,0,False,0,val,0,False
 55139,855652915,R,CC,59.0,1,210,0,False,0,val,0,False
@@ -34544,6 +34540,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 56904,886863118,R,MLO,61.0,2,29,0,False,0,train,3,True
 56904,1881239158,L,MLO,61.0,2,29,0,False,0,train,3,True
 56913,758797975,R,CC,68.0,1,93,0,False,0,train,3,True
+56913,1384396321,L,MLO,68.0,1,93,0,False,0,train,3,True
 56924,1388135008,R,MLO,73.0,2,21,0,False,0,train,3,True
 56924,1846984362,L,CC,73.0,2,21,0,False,0,train,3,True
 56925,352660924,R,MLO,69.0,2,48,0,False,0,val,0,False
@@ -34829,15 +34826,10 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 57455,451238409,R,CC,66.0,2,29,0,False,0,test,-1,False
 57455,779110485,L,MLO,66.0,2,29,0,False,0,test,-1,False
 57455,1646362850,L,CC,66.0,2,29,0,False,0,test,-1,False
-57468,107213666,R,CC,64.0,1,210,0,False,0,train,4,True
-57468,118621619,L,CC,64.0,1,210,0,False,0,train,4,True
 57468,698508408,R,MLO,64.0,1,210,0,False,0,train,4,True
 57468,770890034,L,CC,64.0,1,210,0,False,0,train,4,True
 57468,803243812,L,MLO,64.0,1,210,0,False,0,train,4,True
 57468,822003629,R,CC,64.0,1,210,0,False,0,train,4,True
-57468,977545628,L,MLO,64.0,1,210,0,False,0,train,4,True
-57468,1263889058,R,MLO,64.0,1,210,0,False,0,train,4,True
-57468,1720372073,R,MLO,64.0,1,210,0,False,0,train,4,True
 57468,1779526272,L,CC,64.0,1,210,0,False,0,train,4,True
 57470,454062855,R,MLO,58.0,2,21,0,False,0,train,2,True
 57470,923680251,L,MLO,58.0,2,21,0,False,0,train,2,True
@@ -35592,6 +35584,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 58628,1769695051,R,MLO,53.0,1,49,0,False,0,test,-1,False
 58628,2034448419,L,MLO,53.0,1,49,0,False,0,test,-1,False
 58629,125699548,L,MLO,70.0,2,48,0,False,0,train,2,True
+58629,938929808,R,CC,70.0,2,48,0,False,0,train,2,True
 58630,816422008,L,MLO,52.0,1,49,0,False,0,val,0,False
 58630,978469026,R,MLO,52.0,1,49,0,False,0,val,0,False
 58630,1235005224,L,CC,52.0,1,49,0,False,0,val,0,False
@@ -37464,6 +37457,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 61655,216166953,R,CC,54.0,2,29,0,True,0,train,3,True
 61655,235125181,R,MLO,54.0,2,29,0,True,0,train,3,True
 61655,1178318255,L,CC,54.0,2,29,0,False,0,train,3,True
+61668,198923768,L,MLO,49.0,1,49,0,False,0,train,2,True
 61668,971266222,L,CC,49.0,1,49,0,False,0,train,2,True
 61668,1739982245,R,MLO,49.0,1,49,0,False,0,train,2,True
 61675,681853957,L,CC,53.0,1,49,0,True,0,train,2,True
@@ -39701,9 +39695,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 65346,442421672,R,CC,56.0,1,210,0,False,0,test,-1,False
 65346,452923886,L,CC,56.0,1,210,0,False,0,test,-1,False
 65346,646534282,L,MLO,56.0,1,210,0,False,0,test,-1,False
-65346,1023099060,R,MLO,56.0,1,210,0,False,0,test,-1,False
 65346,1082342023,L,CC,56.0,1,210,0,False,0,test,-1,False
-65346,1338896263,L,MLO,56.0,1,210,0,False,0,test,-1,False
 65346,1537964570,L,CC,56.0,1,210,0,False,0,test,-1,False
 65346,1544613745,R,CC,56.0,1,210,0,False,0,test,-1,False
 65346,1629196514,R,CC,56.0,1,210,0,False,0,test,-1,False
@@ -39762,6 +39754,7 @@ patient_id,image_id,laterality,view,age,site_id,machine_id,cancer,difficult_nega
 65463,1324956799,R,MLO,50.0,2,29,0,False,0,val,0,False
 65463,1756282426,L,CC,50.0,2,29,0,False,0,val,0,False
 65467,233647126,R,CC,67.0,2,48,0,False,0,train,3,True
+65467,1255232455,R,MLO,67.0,2,48,0,False,0,train,3,True
 65467,1481812989,L,MLO,67.0,2,48,0,False,0,train,3,True
 65473,109291741,R,CC,59.0,2,29,0,False,0,train,3,True
 65473,1315275947,L,CC,59.0,2,29,0,False,0,train,3,True

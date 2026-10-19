@@ -197,6 +197,30 @@ def nivel_do_ar_ruidoso(preliminar: np.ndarray) -> float:
     return 0.0 if pico == 0 else float(bordas[pico + 1])
 
 
+def sem_estruturas_finas(mascara: np.ndarray, raio: int) -> np.ndarray:
+    """
+    Abertura por disco: apaga o que é mais fino que ``2 * raio + 1`` pixels.
+
+    Só no ar ruidoso (aparelho 210): lá a borda clara da chapa e as letras do
+    marcador passam do limiar, encostam na mama e entravam no maior componente;
+    o preenchimento por linha então levava a máscara até a borda da chapa.
+
+    Fora da imagem conta como fundo: a borda da chapa costuma ser a última
+    linha do DICOM, e com o padrão do OpenCV (fora = tecido) ela sobrevivia. A
+    parede torácica encostada na borda não sofre: na abertura, a dilatação
+    devolve tudo o que a erosão tirou de uma região grossa.
+    """
+    disco = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * raio + 1, 2 * raio + 1))
+    aberta = cv2.morphologyEx(
+        mascara.astype(np.uint8),
+        cv2.MORPH_OPEN,
+        disco,
+        borderType=cv2.BORDER_CONSTANT,
+        borderValue=0,
+    )
+    return aberta > 0
+
+
 def criar_mascara(imagem: np.ndarray, fator: int = 1) -> np.ndarray:
     """
     Silhueta inteira da mama (tecido x fundo, não denso x adiposo).
@@ -227,9 +251,12 @@ def criar_mascara(imagem: np.ndarray, fator: int = 1) -> np.ndarray:
 
     limiar = float(np.clip(np.percentile(positivos, 0.5), 0.003, 0.02))
     ar = nivel_do_ar_ruidoso(preliminar)
-    if ar > 0:
-        limiar = max(limiar, 2 * ar)
-    mascara = maior_componente(preliminar > limiar)
+    mascara = preliminar > max(limiar, 2 * ar)
+    # A faixa clara da chapa chega a ~16 px na cópia reduzida: o disco (1,2% do lado
+    # menor, ~23 px) precisa ser mais largo que ela.
+    if 2 * ar > limiar:
+        mascara = sem_estruturas_finas(mascara, max(2, int(round(min(mascara.shape) * 0.012))))
+    mascara = maior_componente(mascara)
 
     raio = max(5, int(round(min(mascara.shape) * 0.006)))
     mascara = fechamento_disco(mascara, raio)
