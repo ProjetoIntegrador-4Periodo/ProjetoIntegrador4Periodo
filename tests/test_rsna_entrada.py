@@ -97,12 +97,12 @@ def test_augmentation_nunca_espelha_na_horizontal():
         ativa=True, prob_flip_vertical=1.0, rotacao_graus=0, escala=(1, 1), translacao=0,
         brilho=0, contraste=(1, 1),
     )  # fmt: skip
-    saida, _, _ = aumentar(canvas, dentro, so_flip, np.random.default_rng(0))
+    saida, _ = aumentar(canvas, dentro, so_flip, np.random.default_rng(0))
     np.testing.assert_array_equal(saida, canvas[::-1])
 
     # Com tudo ligado, a parede continua à esquerda em todos os sorteios.
     for semente in range(100):
-        _, m, _ = aumentar(canvas, dentro, AUG, np.random.default_rng(semente))
+        _, m = aumentar(canvas, dentro, AUG, np.random.default_rng(semente))
         meio = m.shape[1] // 2
         assert m[:, :meio].sum() > m[:, meio:].sum(), f"semente {semente}"
 
@@ -114,7 +114,7 @@ def test_augmentation_deixa_o_tecido_encostado_na_borda_esquerda():
     cfg = ConfigAugmentation(ativa=True, rotacao_graus=10, translacao=0.2)
 
     for semente in range(100):
-        saida, m, _ = aumentar(canvas, dentro, cfg, np.random.default_rng(semente))
+        saida, m = aumentar(canvas, dentro, cfg, np.random.default_rng(semente))
         assert m[:, 0].any(), f"semente {semente}: vão entre a borda e o tecido"
         assert (saida[~m] == 0).all()
 
@@ -126,10 +126,9 @@ def test_fundo_continua_preto_apos_augmentation(brilho):
     cfg = ConfigAugmentation(ativa=True, brilho=brilho)
 
     for semente in range(50):
-        saida, m, fator = aumentar(canvas, dentro, cfg, np.random.default_rng(semente))
+        saida, m = aumentar(canvas, dentro, cfg, np.random.default_rng(semente))
         assert saida.dtype == np.uint8 and saida.shape == canvas.shape
         assert (saida[~m] == 0).all(), f"semente {semente}"
-        assert 0.9 <= fator <= 1.1
 
 
 def test_augmentation_ativa_sem_rng_falha():
@@ -138,10 +137,7 @@ def test_augmentation_ativa_sem_rng_falha():
         preparar_entrada(anatomia, mascara, 0.1, ENTRADA, AUG)
 
 
-def test_realce_3canais_e_ponto_de_extensao_e_nome_invalido_falha():
-    anatomia, mascara = mama_png()
-    with pytest.raises(NotImplementedError):
-        preparar_entrada(anatomia, mascara, 0.1, ConfigEntrada(96, 64, "realce_3canais"))
+def test_representacao_com_nome_invalido_falha():
     with pytest.raises(ValueError, match="desconhecida"):
         ConfigEntrada(representacao="rgb")
 

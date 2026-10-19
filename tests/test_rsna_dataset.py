@@ -62,3 +62,31 @@ def test_manifest_sem_coluna_falha(etapa1):
     pasta, manifest = etapa1
     with pytest.raises(ValueError, match="spacing_resultante_mm"):
         MamografiaRSNA(manifest.drop(columns="spacing_resultante_mm"), pasta, ENTRADA)
+
+
+def test_realce_da_pasta_e_igual_ao_calculado_na_hora(etapa1, tmp_path):
+    from dataclasses import asdict
+
+    import yaml
+
+    from src.data.rsna_entrada import caminho_realce, ler_pngs, para_png, representar
+
+    pasta, manifest = etapa1
+    realce = ConfigEntrada(altura=96, largura=64, representacao="realce_3canais")
+    realce_dir = tmp_path / "realce_dir"
+    (realce_dir / "realce").mkdir(parents=True)
+    for r in manifest.itertuples():
+        anatomia, mascara = ler_pngs(pasta, r.png_anatomia, r.png_mascara)
+        rep = representar(anatomia, mascara, r.spacing_resultante_mm, realce)
+        cv2.imwrite(str(realce_dir / caminho_realce(r.image_id)), para_png(rep))
+    parametros = {
+        k: list(v) if isinstance(v, tuple) else v for k, v in asdict(realce.realce).items()
+    }
+    (realce_dir / "config_usada.yaml").write_text(yaml.safe_dump({"realce": parametros}))
+
+    da_pasta = MamografiaRSNA(manifest, pasta, realce, realce_dir=realce_dir)
+    na_hora = MamografiaRSNA(manifest, pasta, realce)
+
+    assert da_pasta.realce_dir is not None and na_hora.realce_dir is None
+    for i in range(len(manifest)):
+        assert torch.equal(da_pasta[i][0], na_hora[i][0])

@@ -1,24 +1,33 @@
 # Etapa 2 do pré-processamento do RSNA: PNG da Etapa 1 -> tensor de entrada do modelo.
-# Roda em tempo de carregamento (Dataset), sem gravar nada em disco.
+# Roda em tempo de carregamento (Dataset). O realce pode vir pré-calculado da pasta
+# gerada por scripts/rsna_realce_gerar.py (mesmo resultado que calcular na hora).
 # Para outra máquina, basta trocar a seção `caminhos`. As seções `entrada` e
 # `augmentation` vão junto com cada checkpoint (ConfigEtapa2.para_checkpoint).
 
 caminhos:
-  # Saída da Etapa 1: anatomia/, mascara/ e manifest_processado.csv
+  # Saída da Etapa 1: anatomia/, mascara/ e manifest_processado.csv (versão em cinza)
   etapa1_dir: /mnt/SSD2/rsna_fold0_etapa1
-  # Grades e medições do script de verificação (nada aqui entra no treino)
+  # Realce pré-calculado: realce/<image_id>.png (RGB), mesmo tamanho da Etapa 1
+  realce_dir: /mnt/SSD2/rsna_fold0_realce
+  # Grades e medições dos scripts de verificação (nada aqui entra no treino)
   verificacao_dir: /mnt/SSD2/rsna_fold0_etapa2_verificacao
 
 entrada:
   altura: 768
   largura: 512
-  # "cinza": canal repetido 3x. "realce_3canais" (anatomia, top-hat, CLAHE) ainda não existe.
+  # "cinza": anatomia repetida 3x. "realce_3canais": R = anatomia, G = top-hat, B = CLAHE.
   representacao: cinza
   # Normalização do ImageNet, por canal
   media: [0.485, 0.456, 0.406]
   desvio: [0.229, 0.224, 0.225]
-  # Reservado para "realce_3canais": raio do top-hat em mm (usa o spacing do canvas)
-  tophat_mm: 0.6
+  # Só para "realce_3canais"; calculado no tamanho da Etapa 1 com spacing_resultante_mm.
+  # Mudar qualquer valor exige gerar a pasta de realce de novo (o Dataset confere).
+  realce:
+    tophat_mm: 0.6          # diâmetro do disco do top-hat
+    mediana: 3              # mediana 3x3 antes do top-hat (1 desliga)
+    percentil_tophat: 99.9  # G: mediana do tecido -> 0, este percentil -> 255
+    clahe_clip: 2.0
+    clahe_tiles: [8, 8]     # grade de tiles (colunas, linhas)
 
 # Desligada por padrão; o script de treino liga só no split de treino.
 # Nunca há flip horizontal: a parede torácica fica sempre à esquerda.
@@ -30,7 +39,15 @@ augmentation:
   translacao: 0.05        # fração da altura/largura do canvas, em cada eixo
   brilho: 0.1             # soma uniforme em [-0.1, 0.1] da escala, só dentro da máscara
   contraste: [0.9, 1.1]   # multiplica em torno da média do tecido, só dentro da máscara
+  # Canais com brilho/contraste. Geometria vale para todos. No realce, só R (0):
+  # mexer em G e B distorceria o que o top-hat e o CLAHE medem.
+  canais_fotometricos: [0]
 
 carregamento:
   workers: 8
   batch_size: 12   # 16 não cabe nos 8 GB da RTX 4060 em 768x512
+
+# scripts/rsna_realce_gerar.py
+geracao_realce:
+  workers: 8
+  amostra_n: 50
