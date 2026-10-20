@@ -76,15 +76,35 @@ Decisão (20/10, aprovada): **lr 2e-5**.
 
 ### Fase 2: proporção
 
-Plano: o melhor `lr` da fase 1, com `negativos_por_positivo` 1 (e `pos_weight` 1) e 4, 1 seed cada; o 1:10 vem da fase 1. Se a diferença para a melhor opção for pequena, a segunda seed roda só nas opções empatadas.
+Plano: `lr` 2e-5 (fase 1), com `negativos_por_positivo` 1 e 4, seed 0; o 1:10 vem da fase 1 (tentativas 5 e 6).
 
-| Nº | Data | Seed | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Observações |
-|----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|-------------|
-| | | | | | | | | | | | | | | |
+**`pos_weight`:** 1,0 nas três proporções. É o padrão da seção `convnext_tiny` (a amostragem já reequilibra as classes), conferido no `config_treino.yaml` das tentativas 5 e 6; o 1:1 passa `pos_weight=1` explícito e o 1:4 usa o padrão. Só a proporção de amostragem muda entre as linhas.
 
-Tabela da fase:
+**Empate:** se a diferença de F2 entre a melhor proporção e a segunda for menor que a variação entre as seeds do 2e-5 na fase 1 (0,019), a seed 1 roda nas empatadas que ainda não a têm (o 1:10 já tem) antes de decidir. O 1:10 entra na comparação pela seed 0 (tentativa 5, F2 0,392), a mesma seed das novas (decidido em 20/10; a média das duas seeds, 0,382, aparece só como referência). **Desempate pelo PR AUC** (20/10): se as proporções empatarem no F2, mas uma ficar acima das outras no PR AUC por mais de 0,033, ela vence sem a seed 1. O 0,033 é a mediana das variações de PR AUC entre seeds da fase 1 (0,003, 0,033 e 0,048); com 2 seeds, o 0,003 do 2e-5 sozinho subestimaria o ruído.
 
-Decisão:
+| Nº | Data | Seed | Proporção | pos_weight | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Observações |
+|----|------|------|-----------|------------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|-------------|
+| 5 | 20/10 | 0 | 1:10 | 1,0 | lr=2e-5 | 11/12 | sim | 0.392 | 0.388 | 0.370 | 0.169 | 0.846 | 0.294 | 0.560 | 0.577 | da fase 1 |
+| 6 | 20/10 | 1 | 1:10 | 1,0 | lr=2e-5 | 11/12 | sim | 0.373 | 0.354 | 0.343 | 0.156 | 0.859 | 0.291 | 0.631 | 0.554 | da fase 1 |
+| 8 | 20/10 | 0 | 1:1 | 1,0 | lr=2e-5, negativos_por_positivo=1, pos_weight=1 | 7/12 | não | 0.353 | 0.298 | 0.330 | 0.177 | 0.834 | 0.224 | 0.536 | 0.469 | F2 oscilando entre 0,32 e 0,35 da validação 5 em diante, com a loss caindo de 0,29 para 0,09 |
+| 9 | 20/10 | 0 | 1:4 | 1,0 | lr=2e-5, negativos_por_positivo=4 | 9/12 | não | 0.372 | 0.323 | 0.352 | 0.180 | 0.835 | 0.213 | 0.560 | 0.458 | F2 0,359 e 0,357 nas duas últimas validações |
+
+Tabela da fase (seed 0; o 1:10 também com a média e a diferença entre seeds):
+
+| Proporção | seeds | pf1 | f1_melhor | f1_5_melhor | f2_melhor | roc_auc | pr_auc | sens_esp90 | esp_sens90 | melhor val./treinadas | ainda melhorando |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1:10 (seed 0) | 0 | 0.169 | 0.388 | 0.370 | 0.392 | 0.846 | 0.294 | 0.560 | 0.577 | 11/12 | sim |
+| 1:10 (média) | 2 (0,1) | 0.163 (Δ 0.013) | 0.371 (Δ 0.034) | 0.357 (Δ 0.027) | 0.382 (Δ 0.019) | 0.853 (Δ 0.013) | 0.293 (Δ 0.003) | 0.595 (Δ 0.071) | 0.566 (Δ 0.023) | 11/12,11/12 | sim,sim |
+| 1:4 | 0 | 0.180 | 0.323 | 0.352 | 0.372 | 0.835 | 0.213 | 0.560 | 0.458 | 9/12 | não |
+| 1:1 | 0 | 0.177 | 0.298 | 0.330 | 0.353 | 0.834 | 0.224 | 0.536 | 0.469 | 7/12 | não |
+
+Decisão (20/10, aprovada): **1:10** (`negativos_por_positivo` 10, `pos_weight` 1,0), sem seed 1 nas outras.
+- **F2:** 1:10 0,3919 contra 0,3723 do 1:4, diferença de 0,0196, acima do limite de empate (0,0194, a diferença entre as seeds do 2e-5). A margem sobre o limite é só 0,0002, então o F2 sozinho não seria conclusivo.
+- **PR AUC:** mesmo tratado como empate, o 1:10 vence pelo desempate: 0,294 contra 0,213 do 1:4 e 0,224 do 1:1, +0,070 a +0,081, acima do limite de 0,033. Também vence em esp_sens90 (0,577 contra 0,458 e 0,469), F1 e F1,5.
+- **pF1:** foi a única métrica que favoreceu levemente as proporções balanceadas (0,180 no 1:4 e 0,177 no 1:1 contra 0,169).
+- **Ainda melhorando:** o 1:10 sim, nas duas seeds (melhor validação na última). O 1:4 e o 1:1 não: o melhor veio antes do fim (validações 9 e 7).
+- **Achado:** mais negativos generalizaram melhor que o balanceamento forte (1:1 a 1:4) usado nas referências da competição. Hipótese: sobreajuste nos positivos. Com o mesmo orçamento de passos, cada positivo foi visto 66 vezes no 1:1, 26,4 no 1:4 e 12 no 1:10 (`epocas_amostragem` no `historico.csv`), o que combina com a melhor validação mais cedo no 1:1 e no 1:4. A loss de treino não serve de evidência aqui, porque muda com a mistura de classes. A hipótese não foi testada diretamente.
+- **Borda da faixa:** como o 1:10 é a maior proporção testada e a tendência foi de melhora com mais negativos, roda uma tentativa extra com 1:20 (seed 0, `pos_weight` 1, mesmo orçamento) antes da fase 3, em "Outras tentativas", com as mesmas regras comparando com a seed 0 do 1:10.
 
 ### Fase 3: EMA
 
@@ -104,7 +124,8 @@ Qualquer tentativa extra, com o motivo.
 
 | Nº | Data | Seed | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Motivo e observações |
 |----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|----------------------|
-| | | | | | | | | | | | | | | |
+| 7 | 20/10 | 0 | lr=1e-5 | 11/12 | sim | 0.355 | 0.320 | 0.313 | 0.148 | 0.855 | 0.234 | 0.583 | 0.581 | Borda da faixa da fase 1 (o vencedor 2e-5 era o menor lr). Não superou o 2e-5: F2 0,355 abaixo da média 0,382 (e longe do limite de 0,401); PR AUC 0,234 contra 0,293 (-0,059, cerca de 20 vezes a diferença entre as seeds do 2e-5). ROC AUC (0,855 contra 0,853) e esp_sens90 (0,581 contra 0,566) empatados, dentro da variação entre seeds. Segue o 2e-5. |
+| 10 | 20/10 | 0 | lr=2e-5, negativos_por_positivo=20, pos_weight=1 | | | | | | | | | | | Em andamento. Borda da faixa da fase 2 (o vencedor 1:10 era a maior proporção). Mesmas regras da fase 2 contra a seed 0 do 1:10 (F2 0,392, PR AUC 0,294). Com o mesmo orçamento de passos, cada positivo aparece cerca de 6,3 vezes em vez de 12 (cerca de 782 positivos; 15.640 negativos por época, dentro do pool de 22.000). |
 
 ## 3. Configuração final escolhida
 
