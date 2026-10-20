@@ -1,14 +1,11 @@
 # Pipeline de divisão e pré-processamento (Etapa 1) do RSNA Screening Mammography.
-# Para regenerar em outra máquina, basta trocar a seção `caminhos`.
+# Para regenerar em outra máquina, basta preencher a seção `pipeline_rsna` do
+# configs/local.yaml (rsna_dir e saida_dir, fora do git).
 # Qualquer outra mudança gera dados diferentes: registre no PR.
 
 caminhos:
-  # Pasta do Kaggle com train.csv e train_images/<patient_id>/<image_id>.dcm (só leitura)
-  rsna_dir: /media/user/OS1/RSNA/data/rsna-breast-cancer-detection
   # CSVs da divisão, versionados no repositório (relativo à raiz do repo)
   splits_dir: splits/rsna_fold0
-  # Raiz dos PNGs e do manifest processado
-  saida_dir: /mnt/SSD2/rsna_fold0_etapa1
 
 semente: 42
 

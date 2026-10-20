@@ -38,6 +38,7 @@ from tqdm import tqdm  # noqa: E402
 
 from src.data.rsna_imagem import Parametros, processar  # noqa: E402
 from src.utils.checksums import gravar_sha256sums  # noqa: E402
+from src.utils.config_local import da_maquina  # noqa: E402
 from src.utils.paths import PROJECT_ROOT  # noqa: E402
 
 cv2.setNumThreads(1)
@@ -202,6 +203,7 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    cfg["caminhos"] = da_maquina("pipeline_rsna", cfg.get("caminhos", {}))
     pp = cfg["preprocessamento"]
     rsna_dir = Path(cfg["caminhos"]["rsna_dir"])
     splits_dir = PROJECT_ROOT / cfg["caminhos"]["splits_dir"]

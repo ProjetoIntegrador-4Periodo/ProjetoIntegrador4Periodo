@@ -28,6 +28,7 @@ from src.data.rsna_divisao import (
     verificar_vazamento,
 )
 from src.utils.checksums import gravar_sha256sums
+from src.utils.config_local import da_maquina
 from src.utils.paths import PROJECT_ROOT
 
 
@@ -51,6 +52,7 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    cfg["caminhos"] = da_maquina("pipeline_rsna", cfg.get("caminhos", {}))
     div = cfg["divisao"]
     semente = cfg["semente"]
     rsna_dir = Path(cfg["caminhos"]["rsna_dir"])

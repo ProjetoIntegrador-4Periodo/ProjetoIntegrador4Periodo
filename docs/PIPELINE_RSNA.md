@@ -49,8 +49,10 @@ A estrutura esperada é `rsna-breast-cancer-detection/train.csv` e
 
 ### 3. Ajustar a config
 
-Em `configs/pipeline_rsna.yaml`, troque só a seção `caminhos` (`rsna_dir` e
-`saida_dir`). Qualquer outro valor muda os dados gerados.
+Crie o `configs/local.yaml` (fora do git) a partir do `configs/local.exemplo.yaml`
+e preencha a seção `pipeline_rsna` (`rsna_dir` e `saida_dir`). O
+`configs/pipeline_rsna.yaml` não tem caminhos da máquina; qualquer valor dele
+muda os dados gerados.
 
 ### 4. Divisão (segundos)
 

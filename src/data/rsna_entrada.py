@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +35,8 @@ import cv2
 import numpy as np
 import yaml
 from scipy import ndimage
+
+from src.utils.config_local import da_maquina
 
 # ---------------------------------------------------------------------------
 # Config
@@ -117,8 +119,10 @@ class ConfigEtapa2:
 
 
 def carregar_config(caminho: Path | str) -> ConfigEtapa2:
+    """A config com os caminhos da máquina (seção ``etapa2`` do configs/local.yaml)."""
     with open(caminho, encoding="utf-8") as arquivo:
-        return ConfigEtapa2.de_dict(yaml.safe_load(arquivo))
+        cfg = ConfigEtapa2.de_dict(yaml.safe_load(arquivo))
+    return replace(cfg, caminhos=da_maquina("etapa2", cfg.caminhos))
 
 
 # ---------------------------------------------------------------------------

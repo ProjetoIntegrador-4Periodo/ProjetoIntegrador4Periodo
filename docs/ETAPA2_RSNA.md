@@ -6,7 +6,8 @@ inferência chamam as mesmas funções (`representar` e `preparar_entrada`).
 
 | Arquivo | O que faz |
 |---------|-----------|
-| `configs/etapa2.yaml` | Caminhos, canvas, representação, realce, augmentation, workers |
+| `configs/etapa2.yaml` | Canvas, representação, realce, augmentation, workers |
+| `configs/local.yaml` | Caminhos desta máquina, seção `etapa2` (fora do git; modelo em `local.exemplo.yaml`) |
 | `src/data/rsna_entrada.py` | Config, representação, canvas, augmentation e normalização (sem torch) |
 | `src/data/rsna_dataset.py` | `MamografiaRSNA`: Dataset PyTorch; `da_config` escolhe pasta e representação |
 | `scripts/rsna_realce_gerar.py` | Gera a pasta de realce (amostra com grade, equivalência e tempos) |
@@ -18,7 +19,7 @@ inferência chamam as mesmas funções (`representar` e `preparar_entrada`).
 ```bash
 pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cu130
 pip install -r requirements-etapa2.txt
-# em configs/etapa2.yaml, troque só a seção `caminhos`
+cp configs/local.exemplo.yaml configs/local.yaml   # e preencha a seção etapa2
 python -m scripts.rsna_realce_gerar --amostra   # 50 imagens, grade em <realce_dir>/amostra
 python -m scripts.rsna_realce_gerar             # pasta completa (retomável)
 python -m scripts.verificar_checksums /mnt/SSD2/rsna_fold0_realce

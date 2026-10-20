@@ -106,9 +106,19 @@ mlruns/
 mlartifacts/
 wandb/
 lightning_logs/
-runs/
+# runs/: só os arquivos pequenos dos treinos do RSNA (configs, métricas, predições,
+# curvas); checkpoints ficam fora do repositório e *.pt continua ignorado.
+runs/**
+!runs/**/
+!runs/**/*.csv
+!runs/**/*.json
+!runs/**/*.yaml
+!runs/**/*.md
+!runs/**/*.png
 outputs/
 checkpoints/
+# Caminhos de cada máquina (modelo versionado: configs/local.exemplo.yaml)
+configs/local.yaml
 logs/
 *.log
 .dvc/cache/

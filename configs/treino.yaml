@@ -1,0 +1,87 @@
+# Treino da detecção de câncer de mama no RSNA (fold 0).
+# O mesmo código treina qualquer modelo em qualquer representação:
+#   - o modelo é a chave `modelo` (ou --modelo na linha de comando);
+#   - a representação vem de configs/etapa2.yaml (entrada.representacao, ou --representacao).
+# Para outra máquina: os caminhos, o MLflow e o nome da máquina ficam no configs/local.yaml (fora do
+# git, a partir do configs/local.exemplo.yaml); aqui, só o batch_real/acumulacao do seu modelo.
+# Referência de cada campo: docs/TREINO_RSNA.md.
+
+caminhos:
+  etapa2_config: configs/etapa2.yaml      # relativo à raiz do repositório
+  runs_dir: runs                          # arquivos pequenos, versionados no git
+  # checkpoints_dir e verificacao_dir: seção `treino` do configs/local.yaml
+
+mlflow:
+  ativo: true
+  # tracking_uri e artefatos_dir: seção `mlflow` do configs/local.yaml
+  experimento: rsna_fold0
+
+modelo: convnext_tiny  # uma das chaves de `modelos`
+
+treino:
+  # passos: o orçamento, a validação, o early stopping, o warmup e o scheduler
+  #   contam passos do otimizador, em "épocas de referência" (os passos de uma
+  #   época na proporção_referencia, ~239 com batch 36). Proporções diferentes
+  #   (1:1, 1:4, 1:10) treinam o mesmo número de passos.
+  # epocas: cada validação é uma época de amostragem da proporção do modelo.
+  orcamento: passos
+  proporcao_referencia: 10      # negativos por positivo da época de referência
+  max_epocas: 30                # treino final: em épocas de referência (ou épocas)
+  max_passos:                   # vazio: max_epocas x passos_por_validacao
+  passos_por_validacao:         # vazio: os passos de uma época de referência
+  paciencia: 5                  # validações sem melhora na métrica de seleção até parar
+  # Métrica de seleção (early stopping, melhor.pt e escolha no ajuste), maior é melhor:
+  # f1_melhor | f1_5_melhor | f2_melhor | esp_sens90 | roc_auc. F2: falso negativo
+  # custa mais que falso positivo neste projeto.
+  metrica_selecao: f2_melhor
+  betas_f: [1.0, 1.5, 2.0]      # F-betas calculados (1, 1,5 e 2 sempre entram)
+  precisao: auto                # auto: bf16 se a GPU suportar, senão fp16 com scaler | fp32
+  channels_last: true
+  bootstrap_amostras: 2000      # intervalos de confiança por mama, no fim do treino
+  semente_bootstrap: 0
+
+ajuste:
+  epocas: 12                    # orçamento: 12 épocas de referência (~2.870 passos com batch 36)
+  max_passos:                   # vazio: epocas x passos_por_validacao
+  paciencia: 5
+
+# Cada pessoa ajusta livremente a seção do próprio modelo. A origem dos valores
+# iniciais está em docs/TREINO_RSNA.md. batch efetivo = batch_real x acumulacao.
+modelos:
+  convnext_tiny:
+    timm_nome: convnext_tiny.in12k_ft_in1k   # ImageNet-22k, ajustado no ImageNet-1k
+    batch_real: 12               # o que cabe na GPU (12 no RTX 4060 de 8 GB)
+    acumulacao: 3                # batch efetivo 36
+    otimizador: adamw
+    lr: 1.0e-4
+    weight_decay: 0.05           # receita do ConvNeXt; sem decay em normas e bias
+    betas: [0.9, 0.999]
+    momento: 0.9                 # só para sgd
+    drop_path: 0.1               # receita do ConvNeXt-T
+    warmup_epocas: 1             # em épocas de referência com orcamento: passos
+    scheduler: cosine            # cosine | constante
+    lr_minimo: 1.0e-6
+    pos_weight: 1.0              # BCEWithLogitsLoss; a amostragem 1:10 já reequilibra
+    negativos_por_positivo: 10   # proporção por época no treino
+    peso_negativo_dificil: 2.0   # peso de sorteio de difficult_negative_case/biopsy
+    ema: false                   # média móvel exponencial dos pesos (validação e melhor.pt)
+    ema_decaimento: 0.999        # janela de ~1.000 passos (~4 épocas de referência)
+
+  resnet50:
+    timm_nome: resnet50.tv2_in1k             # receita nova do torchvision, ImageNet-1k
+    batch_real: 12
+    acumulacao: 3
+    otimizador: sgd
+    lr: 1.0e-2                   # 0,1 por 256 imagens (Goyal et al.) -> ~0,014 para 36
+    weight_decay: 1.0e-4
+    betas: [0.9, 0.999]          # só para adamw
+    momento: 0.9                 # Nesterov
+    drop_path: 0.0
+    warmup_epocas: 1
+    scheduler: cosine
+    lr_minimo: 1.0e-6
+    pos_weight: 1.0
+    negativos_por_positivo: 10
+    peso_negativo_dificil: 2.0
+    ema: false
+    ema_decaimento: 0.999

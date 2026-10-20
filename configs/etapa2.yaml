@@ -1,16 +1,9 @@
 # Etapa 2 do pré-processamento do RSNA: PNG da Etapa 1 -> tensor de entrada do modelo.
 # Roda em tempo de carregamento (Dataset). O realce pode vir pré-calculado da pasta
 # gerada por scripts/rsna_realce_gerar.py (mesmo resultado que calcular na hora).
-# Para outra máquina, basta trocar a seção `caminhos`. As seções `entrada` e
+# Os caminhos da máquina (etapa1_dir, realce_dir, verificacao_dir) ficam na seção
+# `etapa2` do configs/local.yaml, fora do git. As seções `entrada` e
 # `augmentation` vão junto com cada checkpoint (ConfigEtapa2.para_checkpoint).
-
-caminhos:
-  # Saída da Etapa 1: anatomia/, mascara/ e manifest_processado.csv (versão em cinza)
-  etapa1_dir: /mnt/SSD2/rsna_fold0_etapa1
-  # Realce pré-calculado: realce/<image_id>.png (RGB), mesmo tamanho da Etapa 1
-  realce_dir: /mnt/SSD2/rsna_fold0_realce
-  # Grades e medições dos scripts de verificação (nada aqui entra no treino)
-  verificacao_dir: /mnt/SSD2/rsna_fold0_etapa2_verificacao
 
 entrada:
   altura: 768

@@ -1,0 +1,33 @@
+# Caminhos desta máquina. Copie para configs/local.yaml (fora do git) e preencha:
+#   cp configs/local.exemplo.yaml configs/local.yaml
+# Cada seção completa a config versionada de mesmo nome (src/utils/config_local.py).
+# Exemplo do Windows: E:/Treino/rsna_fold0_etapa1 (barras normais).
+
+maquina: pc-davi         # nome curto desta máquina nas tags do MLflow (vazio = hostname)
+
+etapa2:                  # configs/etapa2.yaml
+  # Saída da Etapa 1: anatomia/, mascara/ e manifest_processado.csv (versão em cinza)
+  etapa1_dir: /mnt/SSD2/Treino/rsna_fold0_etapa1
+  # Realce pré-calculado: realce/<image_id>.png (RGB), mesmo tamanho da Etapa 1
+  realce_dir: /mnt/SSD2/Treino/rsna_fold0_realce
+  # Grades e medições dos scripts de verificação da Etapa 2 (nada aqui entra no treino)
+  verificacao_dir: /mnt/SSD2/rsna_fold0_etapa2_verificacao
+
+treino:                  # configs/treino.yaml
+  # Checkpoints, fora do git
+  checkpoints_dir: /mnt/SSD2/rsna_treino/checkpoints
+  # Smoke test, teste de sanidade e maior batch (scripts/rsna_treino_verificar.py)
+  verificacao_dir: /mnt/SSD2/rsna_treino/verificacao
+
+mlflow:                  # configs/treino.yaml, seção mlflow
+  # Local: banco SQLite (quatro barras no Linux; no Windows: sqlite:///E:/rsna_treino/mlflow.db).
+  # Para um servidor compartilhado: http://servidor:5000
+  tracking_uri: sqlite:////mnt/SSD2/rsna_treino/mlflow.db
+  # Onde os artefatos ficam quando o experimento é criado (só vale para o tracking local)
+  artefatos_dir: /mnt/SSD2/rsna_treino/mlartifacts
+
+pipeline_rsna:           # configs/pipeline_rsna.yaml (divisão e Etapa 1; o treino não usa)
+  # Pasta do Kaggle com train.csv e train_images/<patient_id>/<image_id>.dcm (só leitura)
+  rsna_dir: /media/user/OS1/RSNA/data/rsna-breast-cancer-detection
+  # Raiz dos PNGs e do manifest processado
+  saida_dir: /mnt/SSD2/Treino/rsna_fold0_etapa1
