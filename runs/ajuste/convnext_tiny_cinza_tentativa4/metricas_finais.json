@@ -1,0 +1,79 @@
+{
+  "nome": "ajuste/convnext_tiny_cinza_tentativa4",
+  "modo": "ajuste",
+  "semente": 1,
+  "modelo": "convnext_tiny",
+  "timm_nome": "convnext_tiny.in12k_ft_in1k",
+  "batch_real": 12,
+  "acumulacao": 3,
+  "batch_efetivo": 36,
+  "metrica_selecao": "f2_melhor",
+  "limiar_selecao": 0.4857826232910156,
+  "melhor_epoca": 11,
+  "melhor_passo": 2868,
+  "epocas_treinadas": 12,
+  "parou_por_paciencia": false,
+  "segundos_total": 3597.215439940046,
+  "validacao": {
+    "pf1": 0.1367533662804422,
+    "f1_melhor": 0.3649635036496351,
+    "limiar_f1": 0.8354835510253906,
+    "f1_5_melhor": 0.3357438016528925,
+    "limiar_f1_5": 0.8354835510253906,
+    "f2_melhor": 0.34709193245778613,
+    "limiar_f2": 0.4857826232910156,
+    "roc_auc": 0.8364862065604133,
+    "pr_auc": 0.2676404598151051,
+    "sens_esp90": 0.5833333333333334,
+    "esp_sens90": 0.5307062436028659,
+    "limiar_sens90": 0.06097517907619476,
+    "n_mamas": 3992,
+    "n_positivas": 84
+  },
+  "ic95_validacao": {
+    "pf1": {
+      "ic_inferior": 0.10678066196396317,
+      "ic_superior": 0.16876744477492822,
+      "reamostras": 2000
+    },
+    "f1_melhor": {
+      "ic_inferior": 0.26949672667757774,
+      "ic_superior": 0.46810172872340416,
+      "reamostras": 2000
+    },
+    "f1_5_melhor": {
+      "ic_inferior": 0.2627438075383015,
+      "ic_superior": 0.4349049894748818,
+      "reamostras": 2000
+    },
+    "f2_melhor": {
+      "ic_inferior": 0.28973665239571256,
+      "ic_superior": 0.4435483870967742,
+      "reamostras": 2000
+    },
+    "roc_auc": {
+      "ic_inferior": 0.7911147496516737,
+      "ic_superior": 0.8761194000761392,
+      "reamostras": 2000
+    },
+    "pr_auc": {
+      "ic_inferior": 0.17791777968434383,
+      "ic_superior": 0.37204897065261455,
+      "reamostras": 2000
+    },
+    "sens_esp90": {
+      "ic_inferior": 0.48050649350649355,
+      "ic_superior": 0.7000257731958761,
+      "reamostras": 2000
+    },
+    "esp_sens90": {
+      "ic_inferior": 0.4364962918450611,
+      "ic_superior": 0.5898367035376973,
+      "reamostras": 2000
+    }
+  },
+  "passos_por_validacao": 239,
+  "imagens_por_validacao": 8580,
+  "ema": false,
+  "mlflow_run_id": "8d7a996aea844088a16ee04ea45cc4fc"
+}

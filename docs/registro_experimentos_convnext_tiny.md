@@ -52,11 +52,27 @@ Plano: `lr` 1e-4, 5e-5 e 2e-5 (AdamW), proporção 1:10, EMA desligada, seeds 0 
 
 | Nº | Data | Seed | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Observações |
 |----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|-------------|
-| | | | | | | | | | | | | | | |
+| 1 | 19-20/10 | 0 | lr=1e-4 | 9/12 | não | 0.386 | 0.308 | 0.354 | 0.117 | 0.826 | 0.243 | 0.560 | 0.473 | caiu na validação 6 com a sessão; retomada pelo `ultimo.pt` (seção 5) |
+| 2 | 20/10 | 1 | lr=1e-4 | 11/12 | sim | 0.367 | 0.333 | 0.324 | 0.118 | 0.832 | 0.210 | 0.595 | 0.484 | |
+| 3 | 20/10 | 0 | lr=5e-5 | 8/12 | não | 0.358 | 0.308 | 0.332 | 0.120 | 0.850 | 0.222 | 0.583 | 0.579 | |
+| 4 | 20/10 | 1 | lr=5e-5 | 11/12 | sim | 0.347 | 0.365 | 0.336 | 0.137 | 0.836 | 0.268 | 0.583 | 0.531 | |
+| 5 | 20/10 | 0 | lr=2e-5 | 11/12 | sim | 0.392 | 0.388 | 0.370 | 0.169 | 0.846 | 0.294 | 0.560 | 0.577 | |
+| 6 | 20/10 | 1 | lr=2e-5 | 11/12 | sim | 0.373 | 0.354 | 0.343 | 0.156 | 0.859 | 0.291 | 0.631 | 0.554 | |
+
+"Melhor val." conta as validações a partir de 0: `11/12` é a última das 12 (passo 2.868), `9/12` é a décima (passo 2.390).
 
 Tabela da fase (média e diferença entre seeds):
 
-Decisão:
+| configuração | seeds | pf1 | f1_melhor | f1_5_melhor | f2_melhor | roc_auc | pr_auc | sens_esp90 | esp_sens90 | melhor val./treinadas | ainda melhorando |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| lr=2e-05 (cinza) | 2 (0,1) | 0.163 (Δ 0.013) | 0.371 (Δ 0.034) | 0.357 (Δ 0.027) | 0.382 (Δ 0.019) | 0.853 (Δ 0.013) | 0.293 (Δ 0.003) | 0.595 (Δ 0.071) | 0.566 (Δ 0.023) | 11/12,11/12 | sim,sim |
+| lr=0.0001 (cinza) | 2 (0,1) | 0.118 (Δ 0.001) | 0.321 (Δ 0.025) | 0.339 (Δ 0.030) | 0.376 (Δ 0.019) | 0.829 (Δ 0.005) | 0.226 (Δ 0.033) | 0.577 (Δ 0.036) | 0.478 (Δ 0.011) | 9/12,11/12 | não,sim |
+| lr=5e-05 (cinza) | 2 (0,1) | 0.128 (Δ 0.017) | 0.336 (Δ 0.057) | 0.334 (Δ 0.003) | 0.353 (Δ 0.011) | 0.843 (Δ 0.013) | 0.245 (Δ 0.046) | 0.583 (Δ 0.000) | 0.555 (Δ 0.048) | 8/12,11/12 | não,sim |
+
+Decisão (20/10, aprovada): **lr 2e-5**.
+- **Motivo:** o 2e-5 venceu na média em todas as métricas. No F2 (0,382 contra 0,376 do 1e-4), a margem de 0,006 é menor que a diferença entre seeds (0,019), um empate. O maior ganho, e com a menor variação, foi no PR AUC: 0,293 (diferença entre seeds 0,003) contra 0,245 do 5e-5 e 0,226 do 1e-4, +0,067 sobre o 1e-4. Ganhou também em especificidade com sensibilidade de 90% (+0,088), pF1 (+0,045) e ROC AUC (+0,024) sobre o 1e-4.
+- **Ainda melhorando:** sim, nas duas seeds, com a melhor validação na última do orçamento (passo 2.868). F2 nas 4 últimas validações: 0,380, 0,370, 0,384 e 0,392 (seed 0); 0,360, 0,363, 0,371 e 0,373 (seed 1). O ROC AUC ficou estável (0,846 a 0,861).
+- **Borda da faixa:** como o vencedor é o menor lr testado, roda uma tentativa extra com lr 1e-5 (seed 0, mesmo orçamento) antes da fase 2, em "Outras tentativas". Regra combinada: o 1e-5 só substitui o 2e-5 se o F2 dele passar a média do 2e-5 por mais que a diferença entre as seeds do 2e-5 (0,382 + 0,019 = 0,401).
 
 ### Fase 2: proporção
 
