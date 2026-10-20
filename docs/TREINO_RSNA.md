@@ -60,6 +60,35 @@ python -m scripts.rsna_avaliar_teste --run runs/convnext_tiny_cinza_seed1 --uso-
 - **Diagnóstico:** o `--set` troca hiperparâmetros (ex.: `--set lr=2e-5`).
 - **Warmup:** sem warmup, ou com só 1 época (6 passos), o ConvNeXt com AdamW a 1e-4 colapsou para uma resposta constante, com a loss presa em ln 2 por 100 épocas; com 5 épocas, decorou em 12.
 
+## Rodar desacoplado do terminal
+
+Um laço do ajuste ou do treino final leva horas. Preso ao terminal (ou à sessão SSH, do VS Code ou de um assistente), ele morre quando a sessão fecha: foi o que aconteceu na tentativa 1 da fase 1 do ConvNeXt (19/10, caiu na validação 6 de 12, retomada pelo `ultimo.pt` em 20/10). Ponha o laço num script, com `export PYTHONUNBUFFERED=1` (Windows: `$env:PYTHONUNBUFFERED = "1"`) e `|| echo FALHOU ...` em cada treino, para o laço seguir se um falhar. Exemplos completos para Linux e Windows: GUIA_DAVI, seções 9 e 10.
+
+**Iniciar:**
+```bash
+# Linux: sobrevive ao fim do terminal e da sessão SSH
+setsid nohup ./fase1.sh >> fase1.log 2>&1 < /dev/null &
+# Linux, alternativa com tela recuperável: tmux new -s ajuste; ./fase1.sh 2>&1 | tee -a fase1.log
+#   Ctrl+B D sai da sessão; tmux attach -t ajuste volta
+```
+```powershell
+# Windows: processo oculto, independente da janela (desligue a suspensão e não faça logoff)
+Start-Process powershell -WindowStyle Hidden -ArgumentList "-NoProfile","-ExecutionPolicy","Bypass","-File","D:\rsna_treino\logs\fase1.ps1" `
+  -RedirectStandardOutput fase1.log -RedirectStandardError fase1_erros.log
+```
+Nenhum deles sobrevive a reboot ou queda de luz: para isso, o `--retomar`.
+
+**Acompanhar:**
+```bash
+tail -f fase1.log                                          # Windows: Get-Content fase1.log -Wait -Tail 20
+grep -E "^===|validação|melhor validação|Traceback" fase1.log | tail -20
+pgrep -af rsna_treinar                                     # Windows: Get-Process python
+```
+
+**Retomar depois de uma queda** (o `ultimo.pt` guarda a última validação concluída; continua no mesmo run do MLflow):
+- **Ajuste:** a tentativa que caiu é a última `ajuste/<modelo>_<rep>_tentativa<N>` do log sem `melhor validação` depois. Rode-a com a mesma seed e os mesmos `--set`, mais `--retomar --tentativa N`, e depois **só as tentativas que faltam**. Rodar o laço inteiro de novo treinaria outra vez as concluídas, com números novos.
+- **Treino final:** a pasta é fixa (`<modelo>_<rep>_seed<N>`). O laço do GUIA_DAVI (seção 10) pula as concluídas (`metricas_finais.json`), passa `--retomar` quando há `ultimo.pt` e começa as outras; depois de uma queda, basta rodá-lo de novo.
+
 ## Métrica de seleção
 
 Neste projeto, **um falso negativo (câncer não detectado) é muito mais grave que

@@ -350,6 +350,107 @@ Cada tentativa é um treino curto avaliado só na validação, com o mesmo orça
 
 A escolha é pela métrica de seleção, o **F2 por mama** (`f2_melhor`). Rode uma tentativa por comando; o número da tentativa é automático.
 
+Os laços abaixo mostram os comandos. Para as horas de treino, **rode cada laço desacoplado do terminal**, como na subseção a seguir.
+
+### Rodar desacoplado do terminal, acompanhar e retomar
+
+Uma tentativa leva perto de 1 h e um laço inteiro, de 5 a 12 h. Se o laço rodar preso ao terminal (ou à sessão SSH, do VS Code ou de um assistente), **fechar a janela mata o treino**. Isso aconteceu na tentativa 1 do ConvNeXt: o processo caiu com a sessão no meio da noite e só voltou de manhã, pelo checkpoint. Por isso, rode os laços do ajuste e do treino final desacoplados, gravando um log.
+
+**1. Ponha o laço num script**, numa pasta de logs fora do repositório (ex.: `/dados/rsna_treino/logs/`). Exemplo da fase 1:
+
+Linux (`fase1.sh`):
+```bash
+#!/usr/bin/env bash
+cd ~/ProjetoIntegrador4Periodo || exit 1
+export PYTHONUNBUFFERED=1    # o log sai na hora, sem buffer
+for lr in 1e-2 5e-3 2e-3; do
+  for seed in 0 1; do
+    echo "=== $(date '+%F %T') lr=$lr seed=$seed"
+    .venv/bin/python -m scripts.rsna_treinar --modo ajuste --modelo resnet50 --representacao cinza \
+      --seed $seed --set lr=$lr || echo "=== FALHOU lr=$lr seed=$seed (código $?)"
+  done
+done
+echo "=== $(date '+%F %T') fim"
+```
+
+Windows (`fase1.ps1`):
+```powershell
+Set-Location C:\ProjetoIntegrador4Periodo
+$env:PYTHONUNBUFFERED = "1"
+foreach ($lr in "1e-2", "5e-3", "2e-3") {
+  foreach ($seed in 0, 1) {
+    "=== $(Get-Date -Format s) lr=$lr seed=$seed"
+    .\.venv\Scripts\python.exe -m scripts.rsna_treinar --modo ajuste --modelo resnet50 --representacao cinza --seed $seed --set lr=$lr
+    if ($LASTEXITCODE -ne 0) { "=== FALHOU lr=$lr seed=$seed (código $LASTEXITCODE)" }
+  }
+}
+"=== $(Get-Date -Format s) fim"
+```
+
+O `|| echo FALHOU` (ou o `if`) faz o laço seguir para a próxima tentativa se uma falhar, deixando a falha marcada no log.
+
+**2. Inicie desacoplado.** Escolha uma das opções:
+
+- **Linux, `setsid nohup`** (sobrevive ao fechamento do terminal e ao fim da sessão SSH):
+  ```bash
+  cd /dados/rsna_treino/logs
+  chmod +x fase1.sh
+  setsid nohup ./fase1.sh >> fase1.log 2>&1 < /dev/null &
+  ```
+- **Linux, `tmux`** (dá para voltar à tela do treino depois):
+  ```bash
+  tmux new -s ajuste                          # abre a sessão
+  ./fase1.sh 2>&1 | tee -a fase1.log          # roda lá dentro
+  # Ctrl+B e depois D: sai da sessão, o treino continua
+  tmux attach -t ajuste                       # volta para ela
+  ```
+- **Windows (PowerShell)**, processo em segundo plano, independente da janela:
+  ```powershell
+  cd D:\rsna_treino\logs
+  Start-Process powershell -WindowStyle Hidden `
+    -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "D:\rsna_treino\logs\fase1.ps1" `
+    -RedirectStandardOutput fase1.log -RedirectStandardError fase1_erros.log
+  ```
+  Pode fechar a janela do PowerShell. No Windows, também desligue a suspensão enquanto treina (`powercfg /change standby-timeout-ac 0`; volte depois com o valor anterior) e não faça logoff, que encerra os processos do usuário. Bloquear a tela não atrapalha.
+
+Nenhuma das opções sobrevive a uma queda de luz ou a um reboot: para isso existe o `--retomar` (item 4).
+
+**3. Acompanhe o log** (de qualquer terminal, quantas vezes quiser):
+
+Linux:
+```bash
+tail -f /dados/rsna_treino/logs/fase1.log                      # Ctrl+C só para de acompanhar
+grep -E "^===|validação|melhor validação|Traceback" /dados/rsna_treino/logs/fase1.log | tail -20
+pgrep -af rsna_treinar                                         # ainda está rodando?
+nvidia-smi                                                     # GPU em uso
+```
+
+Windows:
+```powershell
+Get-Content D:\rsna_treino\logs\fase1.log -Wait -Tail 20       # Ctrl+C só para de acompanhar
+Select-String -Path D:\rsna_treino\logs\fase1.log -Pattern "^===|validação|Traceback" | Select-Object -Last 20
+Get-Process python -ErrorAction SilentlyContinue               # ainda está rodando?
+nvidia-smi
+```
+
+Cada tentativa escreve uma linha por validação (`validação N (passo P): ... f2_melhor ...`, com `*` quando melhora) e uma linha `melhor validação ...` no fim. O MLflow mostra as mesmas curvas (passo 6).
+
+**Para interromper** de propósito: Linux, `pkill -f fase1.sh; pkill -f rsna_treinar`; Windows, `Stop-Process -Name python` (e feche o PowerShell oculto pelo Gerenciador de Tarefas). Depois, retome como no item 4.
+
+**4. Se cair**, o `ultimo.pt` guarda a última validação concluída, e o treino continua dela no mesmo run do MLflow:
+
+1. No log, ache a tentativa que caiu: a última linha `ajuste/resnet50_cinza_tentativa<N> | ...` sem `melhor validação` depois.
+2. Retome essa tentativa com a **mesma seed e os mesmos `--set`**, mais `--retomar --tentativa <N>`:
+   ```bash
+   python -m scripts.rsna_treinar --modo ajuste --modelo resnet50 --representacao cinza --seed 0 --set lr=1e-2 --retomar --tentativa 1
+   ```
+   O log mostra `retomando de .../ultimo.pt: validação 7 de 12`.
+3. Rode **só as tentativas que faltam**, sem `--retomar`. Edite o script para tirar as que já terminaram e ponha a retomada na primeira linha. **Não rode o laço inteiro de novo:** no ajuste, o número da tentativa é automático, e as tentativas concluídas seriam treinadas outra vez com números novos.
+
+No treino final, o nome da pasta é fixo (`<modelo>_<rep>_seed<N>`), então o laço da seção 10 pode ser rodado de novo depois de uma queda: ele pula o que terminou e retoma o que caiu.
+
+### Fases do ajuste
+
 **Fase 1, learning rate** (otimizador SGD com Nesterov, o da config; 1:10, sem EMA, 2 seeds cada, 6 tentativas):
 
 Linux:
@@ -412,10 +513,7 @@ Copie a tabela para o registro de experimentos ao fim de cada fase, com a decis�
 
 **Quando escolher:** grave a config final na seção `resnet50` do `configs/treino.yaml` (os valores do `--set` vencedor). O treino final não aceita `--set`, para o repositório guardar exatamente o que foi treinado.
 
-**Se uma tentativa cair:**
-```bash
-python -m scripts.rsna_treinar --modo ajuste --modelo resnet50 --representacao cinza --seed <a mesma> --set <os mesmos> --retomar --tentativa <N>
-```
+**Se uma tentativa cair:** retome com `--retomar --tentativa <N>` e rode só as que faltam (item 4 de "Rodar desacoplado do terminal, acompanhar e retomar").
 
 ---
 
@@ -441,14 +539,55 @@ foreach ($rep in "cinza", "realce_3canais") {
 }
 ```
 
+**Rode desacoplado do terminal** (`setsid nohup`, `tmux` ou `Start-Process`, como na seção 9), com um laço que se retoma sozinho: ele pula os treinos concluídos, retoma com `--retomar` o que tiver `ultimo.pt` e começa os outros. Assim, depois de qualquer queda, basta iniciar o mesmo script de novo.
+
+Linux (`final.sh`; troque `CKPT` pelo seu `checkpoints_dir`):
+```bash
+#!/usr/bin/env bash
+cd ~/ProjetoIntegrador4Periodo || exit 1
+export PYTHONUNBUFFERED=1
+CKPT=/dados/rsna_treino/checkpoints
+for rep in cinza realce_3canais; do
+  for seed in 1 2 3; do
+    nome=resnet50_${rep}_seed${seed}
+    [ -f runs/$nome/metricas_finais.json ] && { echo "=== $nome já concluído"; continue; }
+    extra=""; [ -f $CKPT/$nome/ultimo.pt ] && extra="--retomar"
+    echo "=== $(date '+%F %T') $nome $extra"
+    .venv/bin/python -m scripts.rsna_treinar --modo final --modelo resnet50 --representacao $rep --seed $seed $extra \
+      || echo "=== FALHOU $nome (código $?)"
+  done
+done
+echo "=== $(date '+%F %T') fim"
+```
+
+Windows (`final.ps1`):
+```powershell
+Set-Location C:\ProjetoIntegrador4Periodo
+$env:PYTHONUNBUFFERED = "1"
+$ckpt = "D:\rsna_treino\checkpoints"
+foreach ($rep in "cinza", "realce_3canais") {
+  foreach ($seed in 1, 2, 3) {
+    $nome = "resnet50_${rep}_seed$seed"
+    if (Test-Path "runs\$nome\metricas_finais.json") { "=== $nome já concluído"; continue }
+    $extra = @(); if (Test-Path "$ckpt\$nome\ultimo.pt") { $extra = @("--retomar") }
+    "=== $(Get-Date -Format s) $nome $extra"
+    .\.venv\Scripts\python.exe -m scripts.rsna_treinar --modo final --modelo resnet50 --representacao $rep --seed $seed @extra
+    if ($LASTEXITCODE -ne 0) { "=== FALHOU $nome (código $LASTEXITCODE)" }
+  }
+}
+"=== $(Get-Date -Format s) fim"
+```
+
+Inicie com `setsid nohup ./final.sh >> final.log 2>&1 < /dev/null &` (Linux) ou com o `Start-Process` da seção 9 apontando para `final.ps1`, e acompanhe o `final.log` como lá.
+
 **Tempo estimado:** na RTX 4060, cerca de 4 min por época de referência, ou seja, até 2 h por treino se ele for até as 30 (uns 12 h para os 6). O early stopping costuma parar antes. Use o `horas_30_epocas` do seu smoke test para a previsão na sua GPU. Rode um treino de cada vez (por exemplo, o laço inteiro à noite).
 
-**Se cair** (queda de luz, reboot, erro): rode o mesmo comando daquele treino com `--retomar`. Ele continua da última validação concluída, no mesmo run do MLflow:
+**Se cair** (queda de luz, reboot, sessão fechada, erro): inicie o `final.sh` (ou `final.ps1`) de novo. Para um treino avulso, rode o mesmo comando com `--retomar`. Ele continua da última validação concluída, no mesmo run do MLflow:
 ```bash
 python -m scripts.rsna_treinar --modo final --modelo resnet50 --representacao realce_3canais --seed 2 --retomar
 ```
 - **Treino já concluído:** se você rodar de novo um treino que já terminou, o script recusa e avisa. Nada é sobrescrito.
-- **Laço interrompido:** se o laço parou no meio, retome o treino interrompido com `--retomar` e depois rode os que faltam sem `--retomar`.
+- **Laço interrompido:** o `final.sh` resolve sozinho. Sem ele, retome o treino interrompido com `--retomar` e depois rode os que faltam sem `--retomar`.
 
 **Comparação** (depois dos 6 treinos):
 ```bash
@@ -556,6 +695,7 @@ Guarde os checkpoints: eles são necessários para a avaliação final no teste,
 - [ ] Smoke test sem erro nas duas representações (passo 7)
 - [ ] Teste de sanidade com `decorou: True` (passo 7)
 - [ ] Maior batch medido; `batch_real` e `acumulacao` gravados (passo 8)
+- [ ] Laços do ajuste e do treino final rodados desacoplados do terminal, com log (`setsid nohup`, `tmux` ou `Start-Process`; seção 9)
 - [ ] Fase 1 (lr, 2 seeds), fase 2 (proporção) e fase 3 (EMA) do ajuste feitas, com a tabela de cada fase no registro (passo 9)
 - [ ] Config final gravada na seção `resnet50` e justificada no registro (passo 9)
 - [ ] 6 treinos finais concluídos: `cinza` e `realce_3canais`, seeds 1, 2 e 3 (passo 10)

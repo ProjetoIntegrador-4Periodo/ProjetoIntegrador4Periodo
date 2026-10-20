@@ -136,4 +136,10 @@ validação do `melhor.pt` sobre as treinadas (até 30). Tempo = `segundos_total
 Erros, quedas e retomadas, mudanças de batch, avisos estranhos, curvas que
 divergiram, qualquer coisa fora do roteiro. Com data.
 
+- **19/10/2026 ~21:50, queda da tentativa 1 da fase 1** (lr 1e-4, seed 0):
+  - O laço da fase 1 rodava preso à sessão do terminal. Quando a sessão foi encerrada, o processo morreu, depois da validação 6 de 12 (passo 1.673, F2 0,229). As outras 5 tentativas não chegaram a começar, e a GPU ficou parada de ~21:50 a 08:30.
+  - **Retomada em 20/10, 08:30**, pelo `ultimo.pt` gravado às 21:50, com `--retomar --tentativa 1`, mesma seed e mesmo `--set lr=1e-4`. O log confirmou `retomando de .../ultimo.pt: validação 7 de 12`, e a validação 7 saiu no passo 1.912 (= 8 x 239), no mesmo run do MLflow, com o pico de VRAM de 6,05 GB de antes.
+  - **Efeito no resultado:** nenhum esperado. O `ultimo.pt` guarda modelo, otimizador, scheduler, scaler, early stopping e histórico, e a amostragem de cada segmento depende só de (seed, segmento); o teste `test_retomar_da_o_mesmo_treino_que_nao_parar` confere, na CPU, que retomar dá o mesmo treino que não parar. Na GPU, a diferença possível é só a do não determinismo do cuDNN, a mesma entre duas execuções sem queda.
+  - **Mudança no procedimento:** o restante da fase (retomada da 1 e as tentativas 2 a 6) roda desacoplado da sessão, com `setsid nohup` e log em `/mnt/SSD2/rsna_treino/logs/fase1.log`. Como fazer foi documentado no GUIA_DAVI (seções 9 e 10) e no TREINO_RSNA ("Rodar desacoplado do terminal").
+
 -
