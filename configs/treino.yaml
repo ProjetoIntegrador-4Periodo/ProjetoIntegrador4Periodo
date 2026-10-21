@@ -53,7 +53,7 @@ modelos:
     batch_real: 12               # o que cabe na GPU (12 no RTX 4060 de 8 GB)
     acumulacao: 3                # batch efetivo 36
     otimizador: adamw
-    lr: 1.0e-4
+    lr: 2.0e-5                   # ajuste, fase 1 (registro_experimentos_convnext_tiny.md)
     weight_decay: 0.05           # receita do ConvNeXt; sem decay em normas e bias
     betas: [0.9, 0.999]
     momento: 0.9                 # só para sgd

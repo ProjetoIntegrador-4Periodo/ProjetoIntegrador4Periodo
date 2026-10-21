@@ -127,7 +127,7 @@ Decisão (20/10, aprovada): **sem EMA**.
 - **F2:** 0,356 contra 0,392 (-0,036), quase o dobro do limite de empate (0,019); não precisou do desempate nem da seed 1. O PR AUC também ficou abaixo (0,275 contra 0,294).
 - **Onde o EMA ganhou:** esp_sens90 0,603 contra 0,577 (+0,026, pouco acima da diferença entre seeds, 0,023) e ROC AUC 0,851 contra 0,846 (dentro do ruído).
 - **Ainda melhorando:** sim, com a curva mais estável do ajuste (subiu em todas as validações), enquanto a sem EMA oscilou entre 0,350 e 0,392 nas 7 últimas. Com decaimento 0,999, a média cobre os últimos cerca de 1.000 passos, um terço do orçamento, numa fase em que o modelo ainda melhorava; por isso chega atrasada. Ressalva na seção 6.
-- **Extra:** antes do treino final, roda uma tentativa com EMA 0,995 (janela de cerca de 200 passos), em "Outras tentativas". Regra combinada: pelas mesmas regras contra a seed 0 sem EMA; se empatar ou vencer, a EMA 0,995 entra no treino final; se perder, fica sem EMA.
+- **Extra (tentativa 12, EMA 0,995):** perdeu só no F2 (0,365 contra 0,392) e empatou ou ficou levemente à frente nas outras métricas, dentro da variação entre seeds, com o maior PR AUC do ajuste (0,300). Empate técnico decidido pelo F2: o treino final fica sem EMA. Detalhes em "Outras tentativas".
 
 ### Outras tentativas (fora do plano)
 
@@ -137,34 +137,38 @@ Qualquer tentativa extra, com o motivo.
 |----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|----------------------|
 | 7 | 20/10 | 0 | lr=1e-5 | 11/12 | sim | 0.355 | 0.320 | 0.313 | 0.148 | 0.855 | 0.234 | 0.583 | 0.581 | Borda da faixa da fase 1 (o vencedor 2e-5 era o menor lr). Não superou o 2e-5: F2 0,355 abaixo da média 0,382 (e longe do limite de 0,401); PR AUC 0,234 contra 0,293 (-0,059, cerca de 20 vezes a diferença entre as seeds do 2e-5). ROC AUC (0,855 contra 0,853) e esp_sens90 (0,581 contra 0,566) empatados, dentro da variação entre seeds. Segue o 2e-5. |
 | 10 | 20/10 | 0 | lr=2e-5, negativos_por_positivo=20, pos_weight=1 | 9/12 | não | 0.344 | 0.309 | 0.321 | 0.152 | 0.849 | 0.228 | 0.619 | 0.577 | Borda da faixa da fase 2 (o vencedor 1:10 era a maior proporção). Mesmas regras da fase 2 contra a seed 0 do 1:10: F2 0,344 contra 0,392 (-0,048, mais que o dobro do limite de empate de 0,019) e PR AUC 0,228 contra 0,294 (-0,066). ROC AUC (0,849 contra 0,846) e esp_sens90 (0,577 nos dois) empatados; sens_esp90 0,619 contra 0,560, dentro da variação entre seeds dessa métrica (0,071). Curva lenta e instável: F2 0,118 na validação 3, só passou de 0,30 na 6; ROC AUC e esp_sens90 ainda subiam no fim. Cada positivo foi visto 6,3 vezes (contra 12 no 1:10). **Segue o 1:10.** Ressalva na seção 6, "Para explorar no futuro". |
-| 12 | 20/10 | 0 | lr=2e-5, ema=true, ema_decaimento=0.995 | | | | | | | | | | | Em andamento (iniciada às 21:30). A EMA 0,999 perdeu na fase 3 por chegar atrasada; com 0,995 a janela cai de cerca de 1.000 para cerca de 200 passos. Mesmas regras contra a seed 0 sem EMA (F2 0,392, PR AUC 0,294); se empatar ou vencer, entra no treino final. |
+| 12 | 20/10 | 0 | lr=2e-5, ema=true, ema_decaimento=0.995 | 11/12 | sim | 0.365 | 0.378 | 0.362 | 0.165 | 0.860 | 0.300 | 0.607 | 0.568 | A EMA 0,999 perdeu na fase 3 por chegar atrasada; com 0,995 a janela cai de cerca de 1.000 para cerca de 200 passos. Contra a seed 0 sem EMA: **perdeu só no F2** (0,365 contra 0,392, -0,027, acima do limite de empate de 0,019). Nas outras métricas ficou empatada ou levemente à frente, todas dentro da variação entre seeds do 2e-5: ROC AUC 0,860 contra 0,846 (+0,014; variação 0,013), PR AUC 0,300 contra 0,294 (+0,006, o maior PR AUC do ajuste), sens_esp90 0,607 contra 0,560 (+0,047; variação 0,071), F1 0,378 contra 0,388, F1,5 0,362 contra 0,370, pF1 0,165 contra 0,169, esp_sens90 0,568 contra 0,577. Ainda melhorava no fim (melhor validação na última; F2 0,350, 0,360, 0,360 e 0,365 nas 4 últimas). **Empate técnico decidido pelo F2**, a métrica de seleção combinada: pela regra, perdeu, e o treino final fica sem EMA. Ressalva na seção 6. |
 
 ## 3. Configuração final escolhida
 
-Copie a seção do modelo que ficou no `configs/treino.yaml` (a mesma para as
-duas representações) e explique a escolha.
+Seção `convnext_tiny` do `configs/treino.yaml` usada no treino final (a mesma para as duas representações):
 
 ```yaml
 convnext_tiny:
-  timm_nome:
-  batch_real:
-  acumulacao:        # batch efetivo =
-  otimizador:
-  lr:
-  weight_decay:
-  drop_path:
-  warmup_epocas:
-  scheduler:
-  lr_minimo:
-  pos_weight:
-  negativos_por_positivo:
-  peso_negativo_dificil:
-  ema:
-  ema_decaimento:
+  timm_nome: convnext_tiny.in12k_ft_in1k
+  batch_real: 12
+  acumulacao: 3                # batch efetivo = 36
+  otimizador: adamw
+  lr: 2.0e-5                   # fase 1
+  weight_decay: 0.05
+  drop_path: 0.1
+  warmup_epocas: 1
+  scheduler: cosine
+  lr_minimo: 1.0e-6
+  pos_weight: 1.0
+  negativos_por_positivo: 10   # fase 2
+  peso_negativo_dificil: 2.0
+  ema: false                   # fase 3 e tentativa 12
+  ema_decaimento: 0.999
 ```
 
-Motivo da escolha (qual tentativa, por que ela e não as outras, se o ganho
-passou da diferença entre seeds ou foi dentro do ruído):
+Treino: até 30 épocas de referência (cerca de 7.170 passos), paciência 5, seleção por `f2_melhor`.
+
+Motivo da escolha (21/10, aprovada): tentativa 5 (seed 0; seed 1 na tentativa 6).
+- **lr 2e-5 (fase 1):** venceu na média de 2 seeds em todas as métricas; no F2, empate com o 1e-4 (0,382 contra 0,376, dentro da diferença entre seeds de 0,019), decidido pelo PR AUC (0,293 contra 0,226, com variação de 0,003). O 1e-5 (tentativa 7) ficou abaixo.
+- **1:10 (fase 2):** à frente do 1:4 por 0,0196 de F2 (limite 0,0194) e por 0,081 de PR AUC; do 1:1 e do 1:20 (tentativa 10) com folga.
+- **Sem EMA (fase 3):** a EMA 0,999 perdeu por 0,036 de F2. A EMA 0,995 (tentativa 12) perdeu por 0,027 de F2, mas empatou nas outras métricas: empate técnico decidido pelo F2.
+- **Orçamento:** o vencedor ainda melhorava no fim das 12 épocas de referência do ajuste, nas duas seeds; o treino final usa até 30.
 
 ## 4. Treinos finais
 
@@ -197,3 +201,5 @@ Perguntas que o ajuste levantou e não respondeu, por falta de tempo de GPU. Nen
 
 - **1:20 contra 1:10: proporção ou exposição aos positivos?** (20/10, tentativa 10). Com o mesmo orçamento de passos (2.868), o 1:20 viu cada positivo 6,3 vezes, contra 12 no 1:10. Então não dá para separar o efeito da proporção do efeito de menos exposição aos positivos. A curva do 1:20 foi lenta e o ROC AUC ainda subia no fim, o que deixa as duas explicações abertas. Com mais tempo de GPU, valeria testar o 1:20 com um orçamento maior, ou com o mesmo número de exposições por positivo do 1:10 (cerca de 5.475 passos, 1,9 vez o orçamento), para responder se a proporção alta é pior de fato ou só aprende mais devagar. **Isso não muda a decisão atual:** com o orçamento do ajuste, o 1:10 é o vencedor.
 - **EMA com orçamento maior** (20/10, tentativa 11). Com decaimento 0,999, a média dos pesos cobre os últimos cerca de 1.000 passos, um terço do orçamento do ajuste (2.868), num trecho em que o modelo ainda melhorava; a média fica atrás do modelo atual. A curva com EMA subiu em todas as validações e ainda subia no fim, então não dá para separar "EMA é pior" de "EMA chega mais tarde". Com mais tempo de GPU, valeria testar a EMA 0,999 com o orçamento do treino final (até 30 épocas de referência, cerca de 7.170 passos), onde o atraso pesa menos. **Isso não muda a decisão da fase 3:** com o orçamento do ajuste, sem EMA venceu.
+- **EMA 0,995 no treino final** (21/10, tentativa 12). Perdeu só no F2 (0,365 contra 0,392) e ficou empatada ou levemente à frente nas outras métricas, todas dentro da variação entre seeds, com o maior PR AUC do ajuste (0,300), e ainda melhorava no fim. Foi um empate técnico decidido pelo F2, a métrica de seleção. Com mais tempo de GPU, valeria rodar a EMA 0,995 no orçamento do treino final, com as mesmas seeds, para ver se a vantagem do F2 sem EMA se mantém e se o ganho em ROC AUC e PR AUC se confirma. **Isso não muda a decisão:** pela regra combinada, o treino final fica sem EMA.
+
