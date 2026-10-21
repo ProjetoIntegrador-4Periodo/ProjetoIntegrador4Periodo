@@ -108,15 +108,26 @@ Decisão (20/10, aprovada): **1:10** (`negativos_por_positivo` 10, `pos_weight` 
 
 ### Fase 3: EMA
 
-Plano: a melhor combinação até aqui com `ema=true` (decaimento 0,999), 1 seed; segunda seed se empatar.
+Plano: a melhor combinação até aqui (lr 2e-5, 1:10, `pos_weight` 1,0) com `ema=true` (decaimento 0,999), seed 0 (tentativa 11, iniciada em 20/10 às 19:27). Compara com a seed 0 do 1:10 sem EMA (tentativa 5, F2 0,392, PR AUC 0,294) pelas mesmas regras da fase 2: diferença de F2 acima de 0,019 decide; no empate, PR AUC acima por mais de 0,033 decide; senão, seed 1 antes de decidir.
 
 | Nº | Data | Seed | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Observações |
 |----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|-------------|
-| | | | | | | | | | | | | | | |
+| 5 | 20/10 | 0 | lr=2e-5 (sem EMA) | 11/12 | sim | 0.392 | 0.388 | 0.370 | 0.169 | 0.846 | 0.294 | 0.560 | 0.577 | da fase 1, referência |
+| 11 | 20/10 | 0 | lr=2e-5, ema=true (0,999) | 11/12 | sim | 0.356 | 0.339 | 0.342 | 0.145 | 0.851 | 0.275 | 0.571 | 0.603 | F2 subiu em todas as 12 validações, sem queda: 0,126, 0,135, 0,141, 0,168, 0,215, 0,260, 0,285, 0,305, 0,313, 0,331, 0,349 e 0,356 |
 
-Tabela da fase:
+Tabela da fase (seed 0; a referência para o ruído é a diferença entre as seeds do 2e-5 sem EMA):
 
-Decisão:
+| configuração | seeds | pf1 | f1_melhor | f1_5_melhor | f2_melhor | roc_auc | pr_auc | sens_esp90 | esp_sens90 | melhor val./treinadas | ainda melhorando |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| sem EMA | 0 | 0.169 | 0.388 | 0.370 | 0.392 | 0.846 | 0.294 | 0.560 | 0.577 | 11/12 | sim |
+| EMA 0,999 | 0 | 0.145 | 0.339 | 0.342 | 0.356 | 0.851 | 0.275 | 0.571 | 0.603 | 11/12 | sim |
+| diferença entre seeds (2e-5 sem EMA) | | 0.013 | 0.034 | 0.027 | 0.019 | 0.013 | 0.003 | 0.071 | 0.023 | | |
+
+Decisão (20/10, aprovada): **sem EMA**.
+- **F2:** 0,356 contra 0,392 (-0,036), quase o dobro do limite de empate (0,019); não precisou do desempate nem da seed 1. O PR AUC também ficou abaixo (0,275 contra 0,294).
+- **Onde o EMA ganhou:** esp_sens90 0,603 contra 0,577 (+0,026, pouco acima da diferença entre seeds, 0,023) e ROC AUC 0,851 contra 0,846 (dentro do ruído).
+- **Ainda melhorando:** sim, com a curva mais estável do ajuste (subiu em todas as validações), enquanto a sem EMA oscilou entre 0,350 e 0,392 nas 7 últimas. Com decaimento 0,999, a média cobre os últimos cerca de 1.000 passos, um terço do orçamento, numa fase em que o modelo ainda melhorava; por isso chega atrasada. Ressalva na seção 6.
+- **Extra:** antes do treino final, roda uma tentativa com EMA 0,995 (janela de cerca de 200 passos), em "Outras tentativas". Regra combinada: pelas mesmas regras contra a seed 0 sem EMA; se empatar ou vencer, a EMA 0,995 entra no treino final; se perder, fica sem EMA.
 
 ### Outras tentativas (fora do plano)
 
@@ -125,7 +136,8 @@ Qualquer tentativa extra, com o motivo.
 | Nº | Data | Seed | Alterado | Melhor val. | Ainda melhorando | f2_melhor | f1_melhor | f1_5_melhor | pf1 | roc_auc | pr_auc | sens_esp90 | esp_sens90 | Motivo e observações |
 |----|------|------|----------|-------------|------------------|-----------|-----------|-------------|-----|---------|--------|------------|------------|----------------------|
 | 7 | 20/10 | 0 | lr=1e-5 | 11/12 | sim | 0.355 | 0.320 | 0.313 | 0.148 | 0.855 | 0.234 | 0.583 | 0.581 | Borda da faixa da fase 1 (o vencedor 2e-5 era o menor lr). Não superou o 2e-5: F2 0,355 abaixo da média 0,382 (e longe do limite de 0,401); PR AUC 0,234 contra 0,293 (-0,059, cerca de 20 vezes a diferença entre as seeds do 2e-5). ROC AUC (0,855 contra 0,853) e esp_sens90 (0,581 contra 0,566) empatados, dentro da variação entre seeds. Segue o 2e-5. |
-| 10 | 20/10 | 0 | lr=2e-5, negativos_por_positivo=20, pos_weight=1 | | | | | | | | | | | Em andamento. Borda da faixa da fase 2 (o vencedor 1:10 era a maior proporção). Mesmas regras da fase 2 contra a seed 0 do 1:10 (F2 0,392, PR AUC 0,294). Com o mesmo orçamento de passos, cada positivo aparece cerca de 6,3 vezes em vez de 12 (cerca de 782 positivos; 15.640 negativos por época, dentro do pool de 22.000). |
+| 10 | 20/10 | 0 | lr=2e-5, negativos_por_positivo=20, pos_weight=1 | 9/12 | não | 0.344 | 0.309 | 0.321 | 0.152 | 0.849 | 0.228 | 0.619 | 0.577 | Borda da faixa da fase 2 (o vencedor 1:10 era a maior proporção). Mesmas regras da fase 2 contra a seed 0 do 1:10: F2 0,344 contra 0,392 (-0,048, mais que o dobro do limite de empate de 0,019) e PR AUC 0,228 contra 0,294 (-0,066). ROC AUC (0,849 contra 0,846) e esp_sens90 (0,577 nos dois) empatados; sens_esp90 0,619 contra 0,560, dentro da variação entre seeds dessa métrica (0,071). Curva lenta e instável: F2 0,118 na validação 3, só passou de 0,30 na 6; ROC AUC e esp_sens90 ainda subiam no fim. Cada positivo foi visto 6,3 vezes (contra 12 no 1:10). **Segue o 1:10.** Ressalva na seção 6, "Para explorar no futuro". |
+| 12 | 20/10 | 0 | lr=2e-5, ema=true, ema_decaimento=0.995 | | | | | | | | | | | Em andamento (iniciada às 21:30). A EMA 0,999 perdeu na fase 3 por chegar atrasada; com 0,995 a janela cai de cerca de 1.000 para cerca de 200 passos. Mesmas regras contra a seed 0 sem EMA (F2 0,392, PR AUC 0,294); se empatar ou vencer, entra no treino final. |
 
 ## 3. Configuração final escolhida
 
@@ -179,4 +191,9 @@ divergiram, qualquer coisa fora do roteiro. Com data.
   - **Efeito no resultado:** nenhum esperado. O `ultimo.pt` guarda modelo, otimizador, scheduler, scaler, early stopping e histórico, e a amostragem de cada segmento depende só de (seed, segmento); o teste `test_retomar_da_o_mesmo_treino_que_nao_parar` confere, na CPU, que retomar dá o mesmo treino que não parar. Na GPU, a diferença possível é só a do não determinismo do cuDNN, a mesma entre duas execuções sem queda.
   - **Mudança no procedimento:** o restante da fase (retomada da 1 e as tentativas 2 a 6) roda desacoplado da sessão, com `setsid nohup` e log em `/mnt/SSD2/rsna_treino/logs/fase1.log`. Como fazer foi documentado no GUIA_DAVI (seções 9 e 10) e no TREINO_RSNA ("Rodar desacoplado do terminal").
 
--
+## 6. Para explorar no futuro
+
+Perguntas que o ajuste levantou e não respondeu, por falta de tempo de GPU. Nenhuma muda as decisões já tomadas.
+
+- **1:20 contra 1:10: proporção ou exposição aos positivos?** (20/10, tentativa 10). Com o mesmo orçamento de passos (2.868), o 1:20 viu cada positivo 6,3 vezes, contra 12 no 1:10. Então não dá para separar o efeito da proporção do efeito de menos exposição aos positivos. A curva do 1:20 foi lenta e o ROC AUC ainda subia no fim, o que deixa as duas explicações abertas. Com mais tempo de GPU, valeria testar o 1:20 com um orçamento maior, ou com o mesmo número de exposições por positivo do 1:10 (cerca de 5.475 passos, 1,9 vez o orçamento), para responder se a proporção alta é pior de fato ou só aprende mais devagar. **Isso não muda a decisão atual:** com o orçamento do ajuste, o 1:10 é o vencedor.
+- **EMA com orçamento maior** (20/10, tentativa 11). Com decaimento 0,999, a média dos pesos cobre os últimos cerca de 1.000 passos, um terço do orçamento do ajuste (2.868), num trecho em que o modelo ainda melhorava; a média fica atrás do modelo atual. A curva com EMA subiu em todas as validações e ainda subia no fim, então não dá para separar "EMA é pior" de "EMA chega mais tarde". Com mais tempo de GPU, valeria testar a EMA 0,999 com o orçamento do treino final (até 30 épocas de referência, cerca de 7.170 passos), onde o atraso pesa menos. **Isso não muda a decisão da fase 3:** com o orçamento do ajuste, sem EMA venceu.

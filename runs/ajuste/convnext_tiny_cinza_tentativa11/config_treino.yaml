@@ -1,0 +1,47 @@
+modelo: convnext_tiny
+hiperparametros:
+  timm_nome: convnext_tiny.in12k_ft_in1k
+  batch_real: 12
+  acumulacao: 3
+  otimizador: adamw
+  lr: 2.0e-05
+  weight_decay: 0.05
+  betas:
+  - 0.9
+  - 0.999
+  momento: 0.9
+  drop_path: 0.1
+  warmup_epocas: 1.0
+  scheduler: cosine
+  lr_minimo: 1.0e-06
+  pos_weight: 1.0
+  negativos_por_positivo: 10.0
+  peso_negativo_dificil: 2.0
+  ema: true
+  ema_decaimento: 0.999
+  batch_efetivo: 36
+treino:
+  orcamento: passos
+  proporcao_referencia: 10
+  max_epocas: 30
+  max_passos: null
+  passos_por_validacao: null
+  paciencia: 5
+  metrica_selecao: f2_melhor
+  betas_f:
+  - 1.0
+  - 1.5
+  - 2.0
+  precisao: auto
+  channels_last: true
+  bootstrap_amostras: 2000
+  semente_bootstrap: 0
+ajuste:
+  epocas: 12
+  max_passos: null
+  paciencia: 5
+modo: ajuste
+semente: 0
+alteracoes:
+  lr: 2.0e-05
+  ema: true

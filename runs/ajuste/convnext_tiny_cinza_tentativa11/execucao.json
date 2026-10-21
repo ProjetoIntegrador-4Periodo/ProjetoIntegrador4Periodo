@@ -1,0 +1,9 @@
+{
+  "commit": "5823f0dc8cea72510f6a50cd854a141df2110c13",
+  "alteracoes_locais": false,
+  "checkpoint_dir": "/mnt/SSD2/rsna_treino/checkpoints/ajuste/convnext_tiny_cinza_tentativa11",
+  "mlflow_tracking_uri": "sqlite:////mnt/SSD2/rsna_treino/mlflow.db",
+  "mlflow_experimento": "rsna_fold0",
+  "inicio": "2026-10-20 19:27:11",
+  "comando": "/home/user/Documents/ProjetoIntegrador4Periodo/scripts/rsna_treinar.py --modo ajuste --modelo convnext_tiny --representacao cinza --seed 0 --set lr=2e-5 ema=true"
+}
